@@ -264,7 +264,7 @@ nav.site-nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-5.5px
 }
 .layout.sidebar-collapsed .sidebar-content{opacity:0;pointer-events:none}
 .sidebar-photo{
-  width:112px;height:112px;border-radius:22px;overflow:hidden;
+  width:100%;aspect-ratio:1/1;border-radius:22px;overflow:hidden;
   margin-bottom:20px;flex-shrink:0;
   background:radial-gradient(120% 120% at 28% 18%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 62%),var(--card);
   border:1px solid var(--line);
@@ -274,7 +274,7 @@ nav.site-nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-5.5px
 .sidebar-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .sidebar-photo-mono{
   font-family:var(--serif);font-style:italic;font-weight:400;
-  font-size:38px;color:var(--ink);
+  font-size:72px;color:var(--ink);
   background:linear-gradient(180deg,transparent 62%,color-mix(in srgb,var(--accent) 32%,transparent) 62%,color-mix(in srgb,var(--accent) 32%,transparent) 92%,transparent 92%);
   padding:0 .08em;
 }
