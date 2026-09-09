@@ -854,8 +854,8 @@ footer span{color:var(--accent)}
     display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;
     opacity:1;pointer-events:auto;max-height:none;
   }
-  .sidebar-photo{width:76px;height:76px;border-radius:16px;margin-bottom:0;margin-right:16px}
-  .sidebar-photo-mono{font-size:26px}
+  .sidebar-photo{width:112px;height:112px;border-radius:18px;margin-bottom:0;margin-right:18px}
+  .sidebar-photo-mono{font-size:38px}
   .sidebar-name{flex-basis:100%;font-size:22px;margin-top:14px}
   .sidebar .role-scroll{flex-basis:100%}
   .sidebar-facts{flex-direction:row;flex-wrap:wrap;gap:4px 16px;flex-basis:100%}
