@@ -116,6 +116,7 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           id: r.id, title: r.title, description: r.description ?? "",
           icon: r.icon ?? "", category: r.category ?? "",
           organization: r.organization ?? "", year: r.year ?? "", link: r.link ?? "",
+          image: mediaUrl(r.image ?? ""),
           highlight: !!r.highlight, visible: r.visible !== false,
           sortOrder: r.sort_order ?? 0,
         })).filter((a) => a.visible)

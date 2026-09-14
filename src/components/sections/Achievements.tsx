@@ -23,7 +23,14 @@ export default function Achievements({ achievements }: { achievements: Achieveme
           <article className="ach-card ach-lead">
             <div className="ach-top">
               <span className="ach-icon">{lead.icon || "★"}</span>
-              {lead.category && <span className="ach-cat">{lead.category}</span>}
+              <div className="ach-top-right">
+                {lead.category && <span className="ach-cat">{lead.category}</span>}
+                {lead.image && (
+                  <a className="ach-thumb" href={lead.image} target="_blank" rel="noopener" aria-label="View proof photo">
+                    <img src={lead.image} alt="" loading="lazy" />
+                  </a>
+                )}
+              </div>
             </div>
             <h3>{lead.title}</h3>
             {(lead.organization || lead.year) && <div className="ach-meta">{[lead.organization, lead.year].filter(Boolean).join(" · ")}</div>}
@@ -36,7 +43,14 @@ export default function Achievements({ achievements }: { achievements: Achieveme
             <article className={`ach-card${a.highlight ? " is-hi" : ""}`} key={a.id}>
               <div className="ach-top">
                 <span className="ach-icon">{a.icon || "◆"}</span>
-                {a.category && <span className="ach-cat">{a.category}</span>}
+                <div className="ach-top-right">
+                  {a.category && <span className="ach-cat">{a.category}</span>}
+                  {a.image && (
+                    <a className="ach-thumb" href={a.image} target="_blank" rel="noopener" aria-label="View proof photo">
+                      <img src={a.image} alt="" loading="lazy" />
+                    </a>
+                  )}
+                </div>
               </div>
               <h4>{a.title}</h4>
               {(a.organization || a.year) && <div className="ach-meta">{[a.organization, a.year].filter(Boolean).join(" · ")}</div>}

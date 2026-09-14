@@ -84,6 +84,8 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .rte-body b,.rte-body strong{font-weight:700;color:var(--ink)}
 .rte-body .m{color:var(--accent);font-family:var(--mono);font-size:12px;font-weight:500}
 
+.ach-thumb-preview{width:100%;max-width:220px;border-radius:10px;margin-top:12px;border:1px solid var(--line);display:block}
+
 /* repeatable list of rich-text blocks (e.g. About paragraphs) */
 .rte-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .rte-list-item{display:flex;flex-direction:column;gap:6px}

@@ -4,27 +4,29 @@ import { supabase } from "../../lib/supabaseClient";
 import { DataTable } from "../components/DataTable";
 import { FormDrawer, Field } from "../components/FormDrawer";
 import RichTextEditor from "../components/RichTextEditor";
+import ImageUploader from "../components/ImageUploader";
+import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 
 interface Row {
   id: string; title: string; description: string; icon: string; category: string;
-  organization: string; year: string; link: string;
+  organization: string; year: string; link: string; image: string;
   highlight: boolean; visible: boolean; sort_order: number;
 }
 const empty: Row = {
   id: "", title: "", description: "", icon: "", category: "",
-  organization: "", year: "", link: "", highlight: false, visible: true, sort_order: 0,
+  organization: "", year: "", link: "", image: "", highlight: false, visible: true, sort_order: 0,
 };
 
 // columns that may not exist before the migration — stripped on retry
-const OPTIONAL = ["organization", "year", "link", "visible"];
+const OPTIONAL = ["organization", "year", "link", "visible", "image"];
 
 export default function AchievementsAdmin() {
   const qc = useQueryClient();
   const { run } = useToast();
   const { data: rows = [] } = useQuery({ queryKey: ["admin", "achievements"], queryFn: async () => {
     const { data, error } = await supabase!.from("achievements").select("*").order("sort_order"); if (error) throw error;
-    return (data as any[]).map((r) => ({ organization: "", year: "", link: "", visible: true, ...r })) as Row[];
+    return (data as any[]).map((r) => ({ organization: "", year: "", link: "", image: "", visible: true, ...r })) as Row[];
   }});
   const [draft, setDraft] = useState<Row | null>(null);
   const [busy, setBusy] = useState(false);
@@ -93,6 +95,9 @@ export default function AchievementsAdmin() {
           <Field label="Category"><input value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })} placeholder="Award" /></Field>
         </div>
         <Field label="Link (optional)"><input value={draft.link} onChange={(e) => setDraft({ ...draft, link: e.target.value })} placeholder="https://…" /></Field>
+        <Field label="Proof photo (optional — a cheque, certificate, thank-you note…)">
+          <ImageUploader value={draft.image} onChange={(image) => setDraft({ ...draft, image })} label="achievement photo" />
+        </Field>
         <div className="admin-2col">
           <Field label="Highlight"><label className="admin-check"><input type="checkbox" checked={draft.highlight} onChange={(e) => setDraft({ ...draft, highlight: e.target.checked })} /><span>Featured lead card</span></label></Field>
           <Field label="Visible"><label className="admin-check"><input type="checkbox" checked={draft.visible} onChange={(e) => setDraft({ ...draft, visible: e.target.checked })} /><span>Show on site</span></label></Field>
@@ -107,6 +112,7 @@ export default function AchievementsAdmin() {
             </div>
             <h4>{draft.title || "Achievement title"}</h4>
             <p dangerouslySetInnerHTML={{ __html: draft.description || "Short description of the achievement." }} />
+            {draft.image && <img src={mediaUrl(draft.image)} alt="" className="ach-thumb-preview" />}
           </article>
         </div>
       </>)}

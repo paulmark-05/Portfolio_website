@@ -171,7 +171,7 @@ export const SEED: SiteContent = {
     },
   ],
   achievements: [
-    { id: "a1", title: "Letter of Commendation", description: "Awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.", icon: "\u2605", category: "Award", organization: "", year: "", link: "", visible: true, highlight: true, sortOrder: 0 },
+    { id: "a1", title: "Letter of Commendation", description: "Awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.", icon: "\u2605", category: "Award", organization: "", year: "", link: "", image: "", visible: true, highlight: true, sortOrder: 0 },
   ],
   certifications: [
     {

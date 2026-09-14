@@ -47,6 +47,7 @@ export interface Achievement {
   organization: string;
   year: string;
   link: string;
+  image: string;                // optional proof photo (uploaded via admin)
   highlight: boolean;
   visible: boolean;
   sortOrder: number;
