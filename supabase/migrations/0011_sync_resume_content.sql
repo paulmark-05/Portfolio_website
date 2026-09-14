@@ -29,7 +29,7 @@ update public.settings set
   seo_desc = 'Computer Science undergraduate & full-stack / AI developer. Building software that gets used, from a government grievance platform to agentic AI, computer vision, and accessibility engineering.',
   seo_keywords = array['full-stack developer','AI engineer','React','LangGraph','computer vision','accessibility','WCAG'],
   contact_heading = 'Got an interesting<br />problem? <em>Send it over.</em>',
-  contact_description = 'Open to software engineering internships and new-grad roles, graduating 2027. I adapt fast across full-stack, AI/ML, and accessibility work. Generalist by choice, not by accident.'
+  contact_description = 'Open to software engineering internships and new-grad roles, graduating 2027. I move comfortably across full-stack, AI/ML, and accessibility work rather than sticking to one lane.'
 where id = 1;
 
 -- ---------- experience (replace all rows) ----------

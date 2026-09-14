@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 const icBold = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z" /></svg>
@@ -8,6 +8,12 @@ const icItalic = (
 );
 const icUnderline = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4" /><line x1="4" y1="20" x2="20" y2="20" /></svg>
+);
+const icUndo = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14 4 9l5-5" /><path d="M4 9h10a6 6 0 0 1 0 12h-1" /></svg>
+);
+const icRedo = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 14 5-5-5-5" /><path d="M20 9H10a6 6 0 0 0 0 12h1" /></svg>
 );
 
 /** Small inline rich-text editor — Bold / Italic / Underline (and an
@@ -31,8 +37,24 @@ export default function RichTextEditor({
   placeholder?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  // Tracks the last HTML this editor itself produced, so the effect below
+  // can tell "the parent echoed my own edit back" (skip — touching the DOM
+  // mid-typing resets the cursor to the start) apart from "the parent swapped
+  // in different content, e.g. switched records" (apply it).
+  const lastValue = useRef<string | null>(null);
 
-  const sync = () => onChange(ref.current?.innerHTML || "");
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (value !== lastValue.current) el.innerHTML = value || "";
+    lastValue.current = value;
+  }, [value]);
+
+  const sync = () => {
+    const html = ref.current?.innerHTML || "";
+    lastValue.current = html;
+    onChange(html);
+  };
 
   const exec = (cmd: string) => {
     ref.current?.focus();
@@ -60,6 +82,9 @@ export default function RichTextEditor({
         {allowHighlight && (
           <button type="button" title="Highlight selection as a metric" className="rte-highlight" onMouseDown={(e) => { e.preventDefault(); highlight(); }}>Metric</button>
         )}
+        <span className="rte-sep" />
+        <button type="button" title="Undo" onMouseDown={(e) => { e.preventDefault(); exec("undo"); }}>{icUndo}</button>
+        <button type="button" title="Redo" onMouseDown={(e) => { e.preventDefault(); exec("redo"); }}>{icRedo}</button>
       </div>
       <div
         ref={ref}
@@ -70,7 +95,6 @@ export default function RichTextEditor({
         style={{ minHeight: `${rows * 22}px` }}
         onInput={sync}
         onBlur={sync}
-        dangerouslySetInnerHTML={{ __html: value || "" }}
       />
     </div>
   );

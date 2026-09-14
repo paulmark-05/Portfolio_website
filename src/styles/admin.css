@@ -75,8 +75,9 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
   width:auto;padding:0 9px;font-family:var(--mono);font-size:10.5px;font-weight:600;
   color:var(--accent);text-transform:uppercase;letter-spacing:.3px;
 }
+.rte-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--line);flex-shrink:0}
 .rte-body{
-  padding:10px 12px;font-family:var(--sans);font-size:14px;color:var(--ink);line-height:1.55;
+  padding:12px 14px;font-family:var(--sans);font-size:15.5px;color:var(--ink);line-height:1.65;
   outline:none;
 }
 .rte-body:empty::before{content:attr(data-placeholder);color:var(--dim)}

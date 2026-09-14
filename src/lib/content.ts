@@ -205,7 +205,7 @@ export const SEED: SiteContent = {
     contactImage: "",
     contactEyebrow: "Let's talk",
     contactHeading: "Got an interesting<br />problem? <em>Send it over.</em>",
-    contactDescription: "Open to software engineering internships and new-grad roles, graduating 2027. I adapt fast across full-stack, AI/ML, and accessibility work. Generalist by choice, not by accident.",
+    contactDescription: "Open to software engineering internships and new-grad roles, graduating 2027. I move comfortably across full-stack, AI/ML, and accessibility work rather than sticking to one lane.",
     stackTitle: "The tools I <em>reach for</em>",
     stackQuote: "I pick tools by what gets the thing built and shipped fastest, with the right ceiling for impact.",
     stackDescription: "I work full-stack with a slight pull toward <b>AI/ML</b>. Strongest in React, Python, and the LangChain / LangGraph ecosystem; comfortable in OpenCV, Supabase, and modern build tooling.",
