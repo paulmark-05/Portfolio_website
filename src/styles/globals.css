@@ -215,16 +215,10 @@ nav.site-nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-5.5px
 }
 .layout.sidebar-collapsed{grid-template-columns:0 1fr}
 .layout-main{min-width:0}
-/* with the sidebar tucked away, let every section's content run the full
-   width of the column instead of staying capped at the narrower --maxw
-   that was originally sized to sit beside the sidebar. */
-.layout.sidebar-collapsed .wrap{max-width:none}
-/* About and Contact body copy also carry their own reading-width caps
-   (sized for comfortable line length beside the sidebar) — release those
-   too so the text actually reaches the new full-width margins instead of
-   just leaving empty space in a wider box. */
-.layout.sidebar-collapsed .about-copy p,
-.layout.sidebar-collapsed .contact-copy p{max-width:none}
+/* content stays at its normal narrow, centered width (.wrap's own
+   max-width + margin:auto) whether the sidebar is open or retracted —
+   equal margins on both sides always, instead of stretching edge to edge
+   once there's more room. */
 
 .sidebar{
   position:sticky;top:96px;
@@ -402,21 +396,12 @@ section{padding:56px 0;position:relative}
 }
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
-/* highlight cards — one below another beside the sidebar (narrower column),
-   two-up once the sidebar is retracted and there's room to spread out. */
+/* highlight cards — always stacked, one below another, at a consistent
+   narrow width regardless of sidebar state. */
 .highlights-grid{
   margin-top:16px;
   display:flex;flex-direction:column;gap:12px;
   max-width:520px;
-}
-/* gated to the same width the sidebar-collapse toggle exists at — the
-   "collapsed" class is a persisted preference independent of viewport, so
-   without this a phone that last touched the toggle on desktop would try
-   to render two columns in a stack meant for a much wider screen. */
-@media(min-width:901px){
-  .layout.sidebar-collapsed .highlights-grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:none;
-  }
 }
 .commend{
   background:linear-gradient(105deg,color-mix(in srgb,var(--accent-2) 8%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));
