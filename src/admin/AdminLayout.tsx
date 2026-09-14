@@ -59,7 +59,7 @@ export default function AdminLayout() {
           <button className="btn btn-ghost" onClick={async () => { await signOut(); nav("/admin/login"); }}>Log out</button>
         </div>
       </aside>
-      <main className="admin-main"><Outlet /></main>
+      <main className="admin-main"><div className="admin-page"><Outlet /></div></main>
     </div>
   );
 }
