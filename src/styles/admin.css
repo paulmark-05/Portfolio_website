@@ -3,16 +3,22 @@
    visually belongs to the site (makes it showcase-worthy).
    ============================================================ */
 .admin-shell{min-height:100vh;background:var(--paper);position:relative}
+/* frosted-glass drawer — slides in from the left at every width, with a
+   blurred/translucent panel over whatever's behind it rather than a flat
+   fill, for a more "app" feel than a plain sidebar. */
 .admin-sidebar{
-  border-right:1px solid var(--line);padding:22px 18px;
+  border-right:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  padding:22px 18px;
   display:flex;flex-direction:column;gap:18px;
   position:fixed;top:0;left:0;bottom:0;width:248px;
-  background:var(--paper-2);
+  background:color-mix(in srgb,var(--paper-2) 72%,transparent);
+  backdrop-filter:blur(22px) saturate(1.6);
+  -webkit-backdrop-filter:blur(22px) saturate(1.6);
+  box-shadow:14px 0 50px -24px rgba(0,0,0,.4);
   z-index:20;min-width:0;overflow-y:auto;
-  transition:transform .25s var(--ease);
+  transition:transform .3s var(--ease);
 }
 .admin-shell.nav-collapsed .admin-sidebar{transform:translateX(-100%)}
-.admin-shell.nav-collapsed .admin-main{margin-left:0}
 /* retract handle — always reachable, sits at the sidebar's edge when open
    and snaps back to the corner once it's tucked away. */
 .admin-nav-toggle{
@@ -26,6 +32,14 @@
 .admin-nav-toggle:hover{border-color:var(--accent);color:var(--accent)}
 .admin-nav-toggle svg{width:16px;height:16px}
 .admin-shell.nav-collapsed .admin-nav-toggle{left:18px}
+/* dims/blurs the page behind the drawer on mobile, where it overlays
+   instead of pushing content — click it to close. Desktop keeps the
+   sidebar pushing the layout instead, so nothing sits behind it to dim. */
+.admin-nav-scrim{
+  position:fixed;inset:0;z-index:19;
+  background:color-mix(in srgb,var(--ink) 30%,transparent);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+}
 .admin-sidebar .logo{font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:9px;color:var(--ink)}
 .admin-sidebar .logo .dot{
   width:7px;height:7px;border-radius:50%;background:var(--accent);position:relative;
@@ -48,6 +62,7 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);display:block;margin-bottom:6px}
 .admin-user{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
 .admin-main{padding:38px 44px;max-width:1000px;width:100%;margin-left:248px;transition:margin-left .25s var(--ease)}
+.admin-shell.nav-collapsed .admin-main{margin-left:0}
 .admin-h1{font-family:var(--serif);font-size:28px;font-weight:500;color:var(--ink);margin-bottom:6px}
 .admin-toolbar{
   display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:16px;
@@ -157,20 +172,12 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-media-actions{display:flex;justify-content:space-between;gap:6px;padding:8px 10px;border-top:1px solid var(--line)}
 @media(max-width:900px){
   .admin-stats{grid-template-columns:repeat(2,1fr)}
-  .admin-sidebar{
-    position:static;width:auto;height:auto;flex-direction:column;gap:14px;
-    border-right:0;border-bottom:1px solid var(--line);z-index:10
-  }
-  nav.admin-nav{flex-direction:row;flex-wrap:wrap;gap:4px;margin-top:0}
-  .admin-nav a{padding:7px 11px;font-size:13px}
-  .admin-nav a.active{box-shadow:inset 0 -2px 0 var(--accent)}
-  .admin-user{margin:0;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
-  .admin-main{padding:64px 18px 24px;max-width:100%;margin-left:0}
-  /* no fixed sidebar offset to snap back to here — the nav is a normal
-     block above the content, so retracting just removes it from flow
-     instead of sliding it off past the edge. */
+  /* the drawer overlays instead of pushing on a narrow screen — content
+     always runs full width, and the scrim behind the open drawer is what
+     dims it rather than a layout shift. */
+  .admin-main{padding:70px 18px 24px;max-width:100%;margin-left:0}
   .admin-nav-toggle{left:18px}
-  .admin-shell.nav-collapsed .admin-sidebar{display:none;transform:none}
+  .admin-shell:not(.nav-collapsed) .admin-nav-scrim{opacity:1;pointer-events:auto}
 }
 @media(max-width:760px){
   .admin-main{padding:20px 14px}

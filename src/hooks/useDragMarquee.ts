@@ -1,11 +1,19 @@
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 /** Auto-scrolling marquee that's also drag-scrollable with the mouse —
  *  touch/trackpad get native horizontal scrolling for free via the
  *  element's own `overflow-x:auto`. Expects the track content to be
  *  duplicated once by the caller so the scroll position can jump back by
- *  exactly half the scrollWidth near either edge for a seamless loop. */
-export function useDragMarquee(ref: RefObject<HTMLElement | null>, speed = 0.4) {
+ *  exactly half the scrollWidth near either edge for a seamless loop.
+ *
+ *  `paused` is an extra, caller-controlled pause (e.g. a bubble tapped to
+ *  show its name) on top of the built-in pause-on-hover/drag — it's read
+ *  through a ref so toggling it doesn't tear down and restart the scroll
+ *  loop or the pointer listeners. */
+export function useDragMarquee(ref: RefObject<HTMLElement | null>, speed = 0.4, paused = false) {
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -29,7 +37,7 @@ export function useDragMarquee(ref: RefObject<HTMLElement | null>, speed = 0.4) 
     el.scrollLeft = el.scrollWidth / 4 || 0;
 
     const tick = () => {
-      if (!hovering && !dragging && !reduceMotion) {
+      if (!hovering && !dragging && !reduceMotion && !pausedRef.current) {
         el.scrollLeft += speed;
         recenter();
       }

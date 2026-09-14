@@ -43,6 +43,7 @@ export default function AdminLayout() {
       >
         {icMenu}
       </button>
+      <div className="admin-nav-scrim" onClick={() => setOpen(false)} aria-hidden="true" />
       <aside className="admin-sidebar">
         <a className="logo" href="/"><span className="dot" />nayani.paul</a>
         <span className="admin-nav-tag">// cms</span>
