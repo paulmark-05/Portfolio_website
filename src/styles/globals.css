@@ -79,7 +79,12 @@ body::before{
 }
 :root[data-theme="dark"] body::before{opacity:.25}
 
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x);position:relative;z-index:2}
+/* every section shares this same width and center point — a fixed value
+   rather than --maxw (which the top nav also uses and can stay wider), so
+   About/Experience/Skills/Projects/Certificates/Contact all line up on
+   the same left/right edges instead of each section finding its own
+   width independently. */
+.wrap{max-width:760px;margin:0 auto;padding:0 var(--pad-x);position:relative;z-index:2}
 
 /* ============================================================ NAV
    Scoped to the PUBLIC top bar only. Previously a bare `nav {}` selector
@@ -389,25 +394,19 @@ section{padding:56px 0;position:relative}
 .pill-tag::before{content:'';width:20px;height:2px;border-radius:2px;background:var(--accent);flex-shrink:0}
 .reveal.in .pill-tag,.pill-tag{opacity:1}
 
-/* ============================================================ ABOUT
-   Capped narrower than .wrap and centered as one unit, so the heading and
-   the body copy underneath it keep sharing the same left edge instead of
-   the heading staying flush-left while individual paragraphs center
-   independently at a totally different width. */
-#about,
-#contact{max-width:720px;margin-left:auto;margin-right:auto}
+/* ============================================================ ABOUT */
 .about-copy p{
   font-size:16px;line-height:1.62;color:var(--ink-2);
   margin-bottom:13px;font-weight:400;
 }
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
-/* highlight cards — always stacked, one below another, at a consistent
-   narrow width regardless of sidebar state. */
+/* highlight cards — stacked, one below another, filling the same width
+   as the paragraphs above so nothing inside the section is narrower or
+   offset from anything else in it. */
 .highlights-grid{
   margin-top:16px;
   display:flex;flex-direction:column;gap:12px;
-  max-width:520px;
 }
 .commend{
   background:linear-gradient(105deg,color-mix(in srgb,var(--accent-2) 8%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));
