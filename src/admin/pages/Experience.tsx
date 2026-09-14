@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { DataTable } from "../components/DataTable";
-import { FormDrawer, Field } from "../components/FormDrawer";
+import { FormDrawer, Field, FieldBlock } from "../components/FormDrawer";
 import RichTextEditor from "../components/RichTextEditor";
 import ImageUploader from "../components/ImageUploader";
 import { MonthYearPicker, formatRange, parseToValue } from "../components/MonthYearPicker";
@@ -98,7 +98,7 @@ export default function ExperienceAdmin() {
         </Field>
         <Field label="Location (optional)"><input value={draft.location} onChange={(e) => setDraft({ ...draft, location: e.target.value })} placeholder="Kolkata" /></Field>
         <div className="tech-preview"><span>Date label preview: <b>{formatRange(draft.start_date, draft.end_date, draft.current) || "—"}</b></span></div>
-        <Field label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} rows={4} /></Field>
+        <FieldBlock label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} rows={4} /></FieldBlock>
         <Field label="Tech tags (type to search)">
           <TechAutocomplete value={draft.tags} onChange={(tags) => setDraft({ ...draft, tags })} />
         </Field>

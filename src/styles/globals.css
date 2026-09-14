@@ -409,8 +409,14 @@ section{padding:56px 0;position:relative}
   display:flex;flex-direction:column;gap:12px;
   max-width:520px;
 }
-.layout.sidebar-collapsed .highlights-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:none;
+/* gated to the same width the sidebar-collapse toggle exists at — the
+   "collapsed" class is a persisted preference independent of viewport, so
+   without this a phone that last touched the toggle on desktop would try
+   to render two columns in a stack meant for a much wider screen. */
+@media(min-width:901px){
+  .layout.sidebar-collapsed .highlights-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:none;
+  }
 }
 .commend{
   background:linear-gradient(105deg,color-mix(in srgb,var(--accent-2) 8%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));

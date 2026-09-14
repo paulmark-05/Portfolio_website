@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { DataTable } from "../components/DataTable";
-import { FormDrawer, Field } from "../components/FormDrawer";
+import { FormDrawer, Field, FieldBlock } from "../components/FormDrawer";
 import RichTextEditor from "../components/RichTextEditor";
 import ImageUploader from "../components/ImageUploader";
 import { mediaUrl } from "../../lib/queries";
@@ -85,7 +85,7 @@ export default function AchievementsAdmin() {
     <FormDrawer open={!!draft} busy={busy} title={draft?.id ? "Edit achievement" : "New achievement"} onClose={() => setDraft(null)} onSave={save}>
       {draft && (<>
         <Field label="Title"><input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Letter of Commendation" /></Field>
-        <Field label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} /></Field>
+        <FieldBlock label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} /></FieldBlock>
         <div className="admin-2col">
           <Field label="Organization"><input value={draft.organization} onChange={(e) => setDraft({ ...draft, organization: e.target.value })} placeholder="Rajya Sainik Board" /></Field>
           <Field label="Year"><input value={draft.year} onChange={(e) => setDraft({ ...draft, year: e.target.value })} placeholder="2025" /></Field>

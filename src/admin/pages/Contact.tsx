@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
-import { Field } from "../components/FormDrawer";
+import { Field, FieldBlock } from "../components/FormDrawer";
 import RichTextEditor from "../components/RichTextEditor";
 import { useToast } from "../../context/ToastContext";
 
@@ -38,12 +38,12 @@ export default function ContactAdmin() {
       <button className="btn btn-primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button></div>
     <div className="admin-form-grid">
       <h2 className="admin-section-h">Section content</h2>
-      <Field label="Main heading">
+      <FieldBlock label="Main heading">
         <RichTextEditor value={row.contact_heading || ""} onChange={(contact_heading) => setRow({ ...row, contact_heading })} rows={2} placeholder="Got an interesting problem? Send it over." />
-      </Field>
-      <Field label="Description">
+      </FieldBlock>
+      <FieldBlock label="Description">
         <RichTextEditor value={row.contact_description || ""} onChange={(contact_description) => setRow({ ...row, contact_description })} />
-      </Field>
+      </FieldBlock>
 
       <h2 className="admin-section-h">Links</h2>
       <Field label="Email"><input value={row.email || ""} onChange={(e) => setRow({ ...row, email: e.target.value })} /></Field>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
-import { Field } from "../components/FormDrawer";
+import { Field, FieldBlock } from "../components/FormDrawer";
 import ImageUploader from "../components/ImageUploader";
 import RichTextEditor from "../components/RichTextEditor";
 import { SEED } from "../../lib/content";
@@ -186,9 +186,9 @@ export default function ProfileAdmin() {
                   <Field label="Icon"><input value={h.icon} placeholder="🏅" onChange={(e) => update({ icon: e.target.value })} /></Field>
                   <Field label="Headline"><input value={h.headline} placeholder="Letter of Commendation" onChange={(e) => update({ headline: e.target.value })} /></Field>
                 </div>
-                <Field label="Details">
+                <FieldBlock label="Details">
                   <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
-                </Field>
+                </FieldBlock>
               </div>
             );
           })}

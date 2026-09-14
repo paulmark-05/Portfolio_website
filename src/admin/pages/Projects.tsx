@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { DataTable } from "../components/DataTable";
-import { FormDrawer, Field } from "../components/FormDrawer";
+import { FormDrawer, Field, FieldBlock } from "../components/FormDrawer";
 import ImageUploader from "../components/ImageUploader";
 import RichTextEditor from "../components/RichTextEditor";
 import TechAutocomplete from "../components/TechAutocomplete";
@@ -111,9 +111,9 @@ export default function ProjectsAdmin() {
                 <span>Currently active (shows “— Present”)</span>
               </label>
             </Field>
-            <Field label="Description">
+            <FieldBlock label="Description">
               <RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} rows={4} allowHighlight />
-            </Field>
+            </FieldBlock>
             <Field label="Tech stack (type to search — no manual typing of lists)">
               <TechAutocomplete value={draft.tech_stack} onChange={(tech_stack) => setDraft({ ...draft, tech_stack })} />
             </Field>

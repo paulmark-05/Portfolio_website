@@ -2,14 +2,30 @@
    ADMIN CMS — reuses the portfolio design tokens so the CMS
    visually belongs to the site (makes it showcase-worthy).
    ============================================================ */
-.admin-shell{min-height:100vh;background:var(--paper)}
+.admin-shell{min-height:100vh;background:var(--paper);position:relative}
 .admin-sidebar{
   border-right:1px solid var(--line);padding:22px 18px;
   display:flex;flex-direction:column;gap:18px;
   position:fixed;top:0;left:0;bottom:0;width:248px;
   background:var(--paper-2);
   z-index:20;min-width:0;overflow-y:auto;
+  transition:transform .25s var(--ease);
 }
+.admin-shell.nav-collapsed .admin-sidebar{transform:translateX(-100%)}
+.admin-shell.nav-collapsed .admin-main{margin-left:0}
+/* retract handle — always reachable, sits at the sidebar's edge when open
+   and snaps back to the corner once it's tucked away. */
+.admin-nav-toggle{
+  position:fixed;top:20px;left:266px;z-index:30;
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--ink-2);
+  box-shadow:0 8px 20px -10px var(--shadow-med);
+  transition:left .25s var(--ease),background .15s,border-color .15s,color .15s;
+}
+.admin-nav-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.admin-nav-toggle svg{width:16px;height:16px}
+.admin-shell.nav-collapsed .admin-nav-toggle{left:18px}
 .admin-sidebar .logo{font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:9px;color:var(--ink)}
 .admin-sidebar .logo .dot{
   width:7px;height:7px;border-radius:50%;background:var(--accent);position:relative;
@@ -31,7 +47,7 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-nav a.active .admin-nav-idx{color:var(--accent)}
 .admin-eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);display:block;margin-bottom:6px}
 .admin-user{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
-.admin-main{padding:38px 44px;max-width:1000px;width:100%;margin-left:248px}
+.admin-main{padding:38px 44px;max-width:1000px;width:100%;margin-left:248px;transition:margin-left .25s var(--ease)}
 .admin-h1{font-family:var(--serif);font-size:28px;font-weight:500;color:var(--ink);margin-bottom:6px}
 .admin-toolbar{
   display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:16px;
@@ -149,7 +165,12 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
   .admin-nav a{padding:7px 11px;font-size:13px}
   .admin-nav a.active{box-shadow:inset 0 -2px 0 var(--accent)}
   .admin-user{margin:0;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
-  .admin-main{padding:24px 18px;max-width:100%;margin-left:0}
+  .admin-main{padding:64px 18px 24px;max-width:100%;margin-left:0}
+  /* no fixed sidebar offset to snap back to here — the nav is a normal
+     block above the content, so retracting just removes it from flow
+     instead of sliding it off past the edge. */
+  .admin-nav-toggle{left:18px}
+  .admin-shell.nav-collapsed .admin-sidebar{display:none;transform:none}
 }
 @media(max-width:760px){
   .admin-main{padding:20px 14px}
