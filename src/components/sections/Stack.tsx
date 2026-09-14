@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { resolveTech, techLogoUrl } from "../../lib/techRegistry";
 import { mediaUrl } from "../../lib/queries";
 import { useDragMarquee } from "../../hooks/useDragMarquee";
@@ -27,6 +27,14 @@ export default function Stack({ skills }: { skills: Skill[] }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
   useDragMarquee(rowRef, 0.4, !!selected);
+
+  // auto-resume a few seconds after a tap, so a forgotten selection can
+  // never leave the marquee paused indefinitely.
+  useEffect(() => {
+    if (!selected) return;
+    const t = setTimeout(() => setSelected(null), 4000);
+    return () => clearTimeout(t);
+  }, [selected]);
 
   const toggle = (id: string) => setSelected((cur) => (cur === id ? null : id));
 
