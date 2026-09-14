@@ -8,6 +8,6 @@
 alter table public.profiles add column if not exists highlights jsonb default '[]'::jsonb;
 
 update public.profiles
-set highlights = jsonb_build_array(jsonb_build_object('icon', '🏅', 'text', commendation))
+set highlights = jsonb_build_array(jsonb_build_object('icon', '🏅', 'headline', '', 'text', commendation))
 where (highlights is null or highlights = '[]'::jsonb)
   and commendation is not null and commendation <> '';

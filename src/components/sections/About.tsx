@@ -17,7 +17,10 @@ export default function About({ profile }: { profile: Profile }) {
               {profile.highlights.map((h, i) => (
                 <div className="commend" key={i}>
                   <span className="commend-icon" aria-hidden="true">{h.icon || "🏅"}</span>
-                  <p dangerouslySetInnerHTML={{ __html: h.text }} />
+                  <div className="commend-body">
+                    {h.headline && <div className="commend-headline">{h.headline}</div>}
+                    <p dangerouslySetInnerHTML={{ __html: h.text }} />
+                  </div>
                 </div>
               ))}
             </div>

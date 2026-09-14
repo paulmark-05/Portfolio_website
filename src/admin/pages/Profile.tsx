@@ -165,26 +165,34 @@ export default function ProfileAdmin() {
         </div>
 
         <h2 className="admin-section-h">Highlight cards</h2>
-        <p className="admin-hint">One below another beside the sidebar; two-up once it's retracted. Icon can be any emoji.</p>
-        <div className="rte-list">
+        <p className="admin-hint">One below another beside the sidebar; two-up once it's retracted.</p>
+        <div className="highlight-list">
           {(row.highlights || []).map((h: Highlight, i: number) => {
             const items: Highlight[] = row.highlights || [];
             const update = (patch: Partial<Highlight>) => { const next = [...items]; next[i] = { ...next[i], ...patch }; setRow({ ...row, highlights: next }); };
             const move = (dir: -1 | 1) => { const j = i + dir; if (j < 0 || j >= items.length) return; const next = [...items]; [next[i], next[j]] = [next[j], next[i]]; setRow({ ...row, highlights: next }); };
             const del = () => setRow({ ...row, highlights: items.filter((_, j) => j !== i) });
             return (
-              <div className="rte-list-item" key={i}>
-                <input className="infocard-text" style={{ maxWidth: 70 }} value={h.icon} placeholder="🏅" onChange={(e) => update({ icon: e.target.value })} />
-                <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
-                <div className="rte-list-actions">
-                  <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(-1)}>↑</button>
-                  <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(1)}>↓</button>
-                  <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={del}>✕ Remove</button>
+              <div className="highlight-row" key={i}>
+                <div className="highlight-row-head">
+                  <span className="admin-nav-tag">Highlight {i + 1}</span>
+                  <div className="rte-list-actions">
+                    <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(-1)}>↑</button>
+                    <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(1)}>↓</button>
+                    <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={del}>✕ Remove</button>
+                  </div>
                 </div>
+                <div className="highlight-row-top">
+                  <Field label="Icon"><input value={h.icon} placeholder="🏅" onChange={(e) => update({ icon: e.target.value })} /></Field>
+                  <Field label="Headline"><input value={h.headline} placeholder="Letter of Commendation" onChange={(e) => update({ headline: e.target.value })} /></Field>
+                </div>
+                <Field label="Details">
+                  <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
+                </Field>
               </div>
             );
           })}
-          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", text: "" }] })}>+ Add highlight</button>
+          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", headline: "", text: "" }] })}>+ Add highlight</button>
         </div>
       </div>
 

@@ -23,7 +23,7 @@ Outside of internships I keep building small things, mostly to understand how th
     {"icon":"📍","text":"Kolkata, India","visible":true},
     {"icon":"⭐","text":"9.55 CGPA","visible":true}
   ]'::jsonb,
-  highlights = '[{"icon":"🏅","text":"<b>Letter of Commendation</b>, awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency."}]'::jsonb
+  highlights = '[{"icon":"🏅","headline":"Letter of Commendation","text":"Awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency."}]'::jsonb
 where id = (select id from public.profiles limit 1);
 
 -- ---------- settings (single row) ----------

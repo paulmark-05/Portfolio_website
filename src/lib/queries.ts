@@ -70,7 +70,7 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           // up even before the `highlights` column/data exists.
           highlights: profileR.data.highlights ?? (
             profileR.data.commendation
-              ? [{ icon: "🏅", text: profileR.data.commendation }]
+              ? [{ icon: "🏅", headline: "", text: profileR.data.commendation }]
               : SEED.profile.highlights
           ),
           aboutImage: mediaUrl(profileR.data.about_image ?? SEED.profile.aboutImage),
