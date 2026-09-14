@@ -84,7 +84,7 @@ body::before{
    About/Experience/Skills/Projects/Certificates/Contact all line up on
    the same left/right edges instead of each section finding its own
    width independently. */
-.wrap{max-width:760px;margin:0 auto;padding:0 var(--pad-x);position:relative;z-index:2}
+.wrap{max-width:960px;margin:0 auto;padding:0 var(--pad-x);position:relative;z-index:2}
 
 /* ============================================================ NAV
    Scoped to the PUBLIC top bar only. Previously a bare `nav {}` selector
@@ -235,11 +235,14 @@ nav.site-nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-5.5px
 }
 @media(prefers-reduced-motion:reduce){.sidebar{animation:none;opacity:1;transform:none}}
 /* retract handle — stays anchored to the sidebar's right edge, visible
-   whether the sidebar is open or collapsed. Accent-filled so it reads as
-   a primary control, not a faint decoration — plus a one-time pulse ring
-   on load so first-time visitors notice it's interactive. */
+   whether the sidebar is open or collapsed. Pinned at a fixed offset from
+   the top (not vertically centered on the whole sidebar) so it clears the
+   profile photo, which is tall enough now to sit right across the
+   sidebar's true vertical center. Accent-filled so it reads as a primary
+   control, not a faint decoration — plus a one-time pulse ring on load so
+   first-time visitors notice it's interactive. */
 .sidebar-toggle{
-  position:absolute;top:50%;right:-18px;transform:translateY(-50%);
+  position:absolute;top:352px;right:-18px;
   width:36px;height:36px;border-radius:50%;flex-shrink:0;
   background:var(--accent);border:2px solid var(--paper);color:var(--paper);
   display:grid;place-items:center;cursor:pointer;z-index:10;
@@ -252,8 +255,8 @@ nav.site-nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-5.5px
   animation:toggleHint 2.4s ease-out 1.2s 2;
 }
 @keyframes toggleHint{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.6);opacity:0}}
-.sidebar-toggle:hover{background:var(--ink);transform:translateY(-50%) scale(1.08)}
-.sidebar-toggle:active{transform:translateY(-50%) scale(.96)}
+.sidebar-toggle:hover{background:var(--ink);transform:scale(1.08)}
+.sidebar-toggle:active{transform:scale(.96)}
 .sidebar-toggle svg{width:16px;height:16px;transition:transform .4s var(--ease)}
 .layout.sidebar-collapsed .sidebar-toggle svg{transform:rotate(180deg)}
 @media(prefers-reduced-motion:reduce){.sidebar-toggle::after{animation:none}}
