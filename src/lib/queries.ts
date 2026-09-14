@@ -65,7 +65,14 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           aboutTitle: profileR.data.about_title ?? SEED.profile.aboutTitle,
           quickFacts: profileR.data.quick_facts ?? SEED.profile.quickFacts,
           infoCards: profileR.data.info_cards ?? SEED.profile.infoCards,
-          commendation: profileR.data.commendation ?? SEED.profile.commendation,
+          // migrate the old single `commendation` string into the new
+          // multi-highlight list on read, so existing content still shows
+          // up even before the `highlights` column/data exists.
+          highlights: profileR.data.highlights ?? (
+            profileR.data.commendation
+              ? [{ icon: "🏅", text: profileR.data.commendation }]
+              : SEED.profile.highlights
+          ),
           aboutImage: mediaUrl(profileR.data.about_image ?? SEED.profile.aboutImage),
           heroImage: mediaUrl(profileR.data.hero_image ?? SEED.profile.heroImage),
           stackImage: mediaUrl(profileR.data.stack_image ?? SEED.profile.stackImage),

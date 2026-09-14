@@ -402,16 +402,24 @@ section{padding:56px 0;position:relative}
 }
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
-.commend{
+/* highlight cards — one below another beside the sidebar (narrower column),
+   two-up once the sidebar is retracted and there's room to spread out. */
+.highlights-grid{
   margin-top:16px;
+  display:flex;flex-direction:column;gap:12px;
+  max-width:520px;
+}
+.layout.sidebar-collapsed .highlights-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:none;
+}
+.commend{
   background:linear-gradient(105deg,color-mix(in srgb,var(--accent-2) 8%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));
   border:1px solid color-mix(in srgb,var(--accent-2) 22%,transparent);
   border-left:3px solid var(--accent-2);
   border-radius:12px;padding:14px 16px;
   display:flex;gap:14px;align-items:flex-start;
-  max-width:520px;
 }
-.commend svg{width:22px;height:22px;color:var(--accent-2);flex-shrink:0;margin-top:1px}
+.commend-icon{font-size:20px;line-height:1;flex-shrink:0;margin-top:1px}
 .commend p{font-size:14px;line-height:1.55;color:var(--ink-2)}
 .commend p b{color:var(--accent-2);font-weight:600}
 

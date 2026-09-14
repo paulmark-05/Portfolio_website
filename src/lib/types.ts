@@ -2,6 +2,7 @@ export interface CTA { label: string; href: string }
 export interface QuickFact { label: string; value: string }
 
 export interface InfoCard { icon: string; text: string; visible: boolean }
+export interface Highlight { icon: string; text: string }   // HTML-allowed text
 
 export interface Profile {
   name: string;
@@ -16,7 +17,7 @@ export interface Profile {
   aboutParagraphs: string[];   // HTML-allowed (bold tags etc.)
   quickFacts: QuickFact[];
   infoCards: InfoCard[];       // editable hero info row (emoji + text)
-  commendation: string;        // HTML-allowed
+  highlights: Highlight[];     // editable highlight cards (admin-chosen icon + text)
   aboutImage: string;
   heroImage: string;
   stackImage: string;

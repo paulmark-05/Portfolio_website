@@ -12,10 +12,14 @@ export default function About({ profile }: { profile: Profile }) {
           {profile.aboutParagraphs.map((p, i) => (
             <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
           ))}
-          {profile.commendation && (
-            <div className="commend">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="9" r="6" /><path d="M9 13l-2 8 5-3 5 3-2-8" /></svg>
-              <p dangerouslySetInnerHTML={{ __html: profile.commendation }} />
+          {profile.highlights.length > 0 && (
+            <div className="highlights-grid">
+              {profile.highlights.map((h, i) => (
+                <div className="commend" key={i}>
+                  <span className="commend-icon" aria-hidden="true">{h.icon || "🏅"}</span>
+                  <p dangerouslySetInnerHTML={{ __html: h.text }} />
+                </div>
+              ))}
             </div>
           )}
         </div>

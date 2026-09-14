@@ -41,8 +41,12 @@ export const SEED: SiteContent = {
       { icon: "📍", text: "Kolkata, India", visible: true },
       { icon: "⭐", text: "9.55 CGPA", visible: true },
     ],
-    commendation:
-      "<b>Letter of Commendation</b>, awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.",
+    highlights: [
+      {
+        icon: "🏅",
+        text: "<b>Letter of Commendation</b>, awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.",
+      },
+    ],
     aboutImage: "",
     heroImage: "",
     stackImage: "",

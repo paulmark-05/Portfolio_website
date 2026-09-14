@@ -9,7 +9,7 @@ import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 import Sidebar from "../../components/layout/Sidebar";
 import About from "../../components/sections/About";
-import type { Profile, InfoCard, Settings } from "../../lib/types";
+import type { Profile, InfoCard, Highlight, Settings } from "../../lib/types";
 
 const EMPTY_SETTINGS: Settings = {
   email: "", linkedin: "", github: "", contactImage: "",
@@ -27,16 +27,25 @@ export default function ProfileAdmin() {
 
   useEffect(() => {
     supabase!.from("profiles").select("*").limit(1).maybeSingle().then(({ data }) => {
-      setRow(data ?? {
-        name: SEED.profile.name, title: SEED.profile.title,
-        availability_badge: SEED.profile.availabilityBadge,
-        subtitle: SEED.profile.subtitle, resume_url: "",
-        cta_primary: SEED.profile.ctaPrimary, roles: SEED.profile.roles,
-        about_md: SEED.profile.aboutParagraphs.join("\n\n"),
-        commendation: SEED.profile.commendation,
-        info_cards: SEED.profile.infoCards,
-        hero_image: "",
-      });
+      if (data) {
+        // migrate the old single `commendation` string into the new
+        // `highlights` list the first time this row is opened in the admin.
+        if (!data.highlights && data.commendation) {
+          data.highlights = [{ icon: "🏅", text: data.commendation }];
+        }
+        setRow(data);
+      } else {
+        setRow({
+          name: SEED.profile.name, title: SEED.profile.title,
+          availability_badge: SEED.profile.availabilityBadge,
+          subtitle: SEED.profile.subtitle, resume_url: "",
+          cta_primary: SEED.profile.ctaPrimary, roles: SEED.profile.roles,
+          about_md: SEED.profile.aboutParagraphs.join("\n\n"),
+          highlights: SEED.profile.highlights,
+          info_cards: SEED.profile.infoCards,
+          hero_image: "",
+        });
+      }
     });
   }, []);
 
@@ -49,12 +58,12 @@ export default function ProfileAdmin() {
         name: row.name, title: row.title, availability_badge: row.availability_badge,
         subtitle: row.subtitle, resume_url: row.resume_url,
         cta_primary: row.cta_primary, roles: row.roles,
-        about_md: row.about_md, commendation: row.commendation,
+        about_md: row.about_md, highlights: row.highlights,
         info_cards: row.info_cards, hero_image: row.hero_image,
       };
       let { error } = await supabase!.from("profiles").update(full).eq("id", id);
-      if (error && /column .*(availability_badge|info_cards|commendation|roles)/i.test(error.message)) {
-        const { availability_badge, info_cards, commendation, roles, ...safe } = full;
+      if (error && /column .*(availability_badge|info_cards|highlights|roles)/i.test(error.message)) {
+        const { availability_badge, info_cards, highlights, roles, ...safe } = full;
         ({ error } = await supabase!.from("profiles").update(safe).eq("id", id));
       }
       if (error) throw error;
@@ -80,7 +89,7 @@ export default function ProfileAdmin() {
     ctaPrimary: { label: "", href: "" }, ctaGhost: { label: "", href: "" }, resumeUrl: row.resume_url || "",
     aboutParagraphs: (row.about_md || "").split("\n\n").filter(Boolean),
     aboutTitle: "", quickFacts: [], infoCards: row.info_cards || [],
-    commendation: row.commendation ?? SEED.profile.commendation,
+    highlights: row.highlights ?? SEED.profile.highlights,
     aboutImage: "", heroImage: mediaUrl(row.hero_image || ""), stackImage: "",
   };
 
@@ -155,10 +164,28 @@ export default function ProfileAdmin() {
           <button className="btn btn-ghost" onClick={() => setParas([...paras, ""])}>+ Add paragraph</button>
         </div>
 
-        <h2 className="admin-section-h">Highlight card</h2>
-        <Field label="e.g. Letter of Commendation — awarded by…">
-          <RichTextEditor value={row.commendation || ""} onChange={(commendation) => setRow({ ...row, commendation })} />
-        </Field>
+        <h2 className="admin-section-h">Highlight cards</h2>
+        <p className="admin-hint">One below another beside the sidebar; two-up once it's retracted. Icon can be any emoji.</p>
+        <div className="rte-list">
+          {(row.highlights || []).map((h: Highlight, i: number) => {
+            const items: Highlight[] = row.highlights || [];
+            const update = (patch: Partial<Highlight>) => { const next = [...items]; next[i] = { ...next[i], ...patch }; setRow({ ...row, highlights: next }); };
+            const move = (dir: -1 | 1) => { const j = i + dir; if (j < 0 || j >= items.length) return; const next = [...items]; [next[i], next[j]] = [next[j], next[i]]; setRow({ ...row, highlights: next }); };
+            const del = () => setRow({ ...row, highlights: items.filter((_, j) => j !== i) });
+            return (
+              <div className="rte-list-item" key={i}>
+                <input className="infocard-text" style={{ maxWidth: 70 }} value={h.icon} placeholder="🏅" onChange={(e) => update({ icon: e.target.value })} />
+                <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
+                <div className="rte-list-actions">
+                  <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(-1)}>↑</button>
+                  <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(1)}>↓</button>
+                  <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={del}>✕ Remove</button>
+                </div>
+              </div>
+            );
+          })}
+          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", text: "" }] })}>+ Add highlight</button>
+        </div>
       </div>
 
       {/* LIVE PREVIEW DRAWER — renders Sidebar + About from current form values */}

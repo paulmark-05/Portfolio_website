@@ -8,6 +8,8 @@
 -- replaced each time (delete + insert) so it can't duplicate rows.
 
 -- ---------- profile (single row — update in place) ----------
+alter table public.profiles add column if not exists highlights jsonb default '[]'::jsonb;
+
 update public.profiles set
   availability_badge = 'Open to internships & new-grad roles',
   roles = '["Full-Stack Engineer","AI Product Developer","Accessibility Engineer","CS @ KIIT, ''27"]'::jsonb,
@@ -21,7 +23,7 @@ Outside of internships I keep building small things, mostly to understand how th
     {"icon":"📍","text":"Kolkata, India","visible":true},
     {"icon":"⭐","text":"9.55 CGPA","visible":true}
   ]'::jsonb,
-  commendation = '<b>Letter of Commendation</b>, awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.'
+  highlights = '[{"icon":"🏅","text":"<b>Letter of Commendation</b>, awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency."}]'::jsonb
 where id = (select id from public.profiles limit 1);
 
 -- ---------- settings (single row) ----------
