@@ -389,10 +389,16 @@ section{padding:56px 0;position:relative}
 .pill-tag::before{content:'';width:20px;height:2px;border-radius:2px;background:var(--accent);flex-shrink:0}
 .reveal.in .pill-tag,.pill-tag{opacity:1}
 
-/* ============================================================ ABOUT */
+/* ============================================================ ABOUT
+   Capped narrower than .wrap and centered as one unit, so the heading and
+   the body copy underneath it keep sharing the same left edge instead of
+   the heading staying flush-left while individual paragraphs center
+   independently at a totally different width. */
+#about,
+#contact{max-width:720px;margin-left:auto;margin-right:auto}
 .about-copy p{
   font-size:16px;line-height:1.62;color:var(--ink-2);
-  margin-bottom:13px;font-weight:400;max-width:640px;
+  margin-bottom:13px;font-weight:400;
 }
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
