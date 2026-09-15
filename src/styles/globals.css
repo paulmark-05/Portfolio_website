@@ -720,7 +720,14 @@ section{padding:56px 0;position:relative}
   box-shadow:0 6px 16px -8px var(--shadow-med);
 }
 .logo-chip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
-.proj-row-actions{display:flex;flex-direction:column;gap:9px;align-items:stretch;min-width:130px}
+.proj-row-actions{
+  display:flex;flex-direction:column;gap:9px;align-items:stretch;min-width:130px;
+  /* bottom-align instead of the grid's default vertical centering — with a
+     longer description the body column grows taller than the actions
+     column, and centering left the button floating in empty space instead
+     of sitting level with the tech-stack icons at the bottom of the card */
+  align-self:end;
+}
 .proj-row-actions .plink{justify-content:center}
 .proj .plink,.proj-row-actions .plink{
   font-family:var(--mono);font-size:12px;display:inline-flex;align-items:center;gap:6px;
