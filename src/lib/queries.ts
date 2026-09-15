@@ -4,7 +4,7 @@ import type {
   SiteContent, Project, Experience, Skill, Certification, Profile, Settings, Achievement, SectionConfig, SectionKey,
 } from "./types";
 
-const SECTION_KEYS: SectionKey[] = ["work", "stack", "achievements", "projects", "certs"];
+const SECTION_KEYS: SectionKey[] = ["highlights", "work", "stack", "achievements", "projects", "certs"];
 
 /** Merge whatever is stored for section order/visibility with the known
  *  section keys. If nothing is stored at all yet (e.g. the `sections`
@@ -67,12 +67,16 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           infoCards: profileR.data.info_cards ?? SEED.profile.infoCards,
           // migrate the old single `commendation` string into the new
           // multi-highlight list on read, so existing content still shows
-          // up even before the `highlights` column/data exists.
-          highlights: profileR.data.highlights ?? (
-            profileR.data.commendation
-              ? [{ icon: "🏅", headline: "", text: profileR.data.commendation }]
-              : SEED.profile.highlights
-          ),
+          // up even before the `highlights` column/data exists. Each
+          // highlight's image is its own storage path, resolved the same
+          // way as every other image field.
+          highlights: (
+            profileR.data.highlights ?? (
+              profileR.data.commendation
+                ? [{ icon: "🏅", headline: "", text: profileR.data.commendation, image: "" }]
+                : SEED.profile.highlights
+            )
+          ).map((h: any) => ({ icon: h.icon ?? "", headline: h.headline ?? "", text: h.text ?? "", image: mediaUrl(h.image ?? "") })),
           aboutImage: mediaUrl(profileR.data.about_image ?? SEED.profile.aboutImage),
           heroImage: mediaUrl(profileR.data.hero_image ?? SEED.profile.heroImage),
           stackImage: mediaUrl(profileR.data.stack_image ?? SEED.profile.stackImage),

@@ -9,6 +9,7 @@ import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 import Sidebar from "../../components/layout/Sidebar";
 import About from "../../components/sections/About";
+import Highlights from "../../components/sections/Highlights";
 import type { Profile, InfoCard, Highlight, Settings } from "../../lib/types";
 
 const EMPTY_SETTINGS: Settings = {
@@ -31,7 +32,7 @@ export default function ProfileAdmin() {
         // migrate the old single `commendation` string into the new
         // `highlights` list the first time this row is opened in the admin.
         if (!data.highlights && data.commendation) {
-          data.highlights = [{ icon: "🏅", text: data.commendation }];
+          data.highlights = [{ icon: "🏅", text: data.commendation, image: "" }];
         }
         setRow(data);
       } else {
@@ -89,7 +90,7 @@ export default function ProfileAdmin() {
     ctaPrimary: { label: "", href: "" }, ctaGhost: { label: "", href: "" }, resumeUrl: row.resume_url || "",
     aboutParagraphs: (row.about_md || "").split("\n\n").filter(Boolean),
     aboutTitle: "", quickFacts: [], infoCards: row.info_cards || [],
-    highlights: row.highlights ?? SEED.profile.highlights,
+    highlights: (row.highlights ?? SEED.profile.highlights).map((h: Highlight) => ({ ...h, image: mediaUrl(h.image || "") })),
     aboutImage: "", heroImage: mediaUrl(row.hero_image || ""), stackImage: "",
   };
 
@@ -165,7 +166,7 @@ export default function ProfileAdmin() {
         </div>
 
         <h2 className="admin-section-h">Highlight cards</h2>
-        <p className="admin-hint">One below another beside the sidebar; two-up once it's retracted.</p>
+        <p className="admin-hint">Shown in their own "Highlights" section further down the page — toggle or reorder it in Page Sections.</p>
         <div className="highlight-list">
           {(row.highlights || []).map((h: Highlight, i: number) => {
             const items: Highlight[] = row.highlights || [];
@@ -189,18 +190,21 @@ export default function ProfileAdmin() {
                 <FieldBlock label="Details">
                   <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
                 </FieldBlock>
+                <Field label="Photo (optional)">
+                  <ImageUploader value={h.image || ""} onChange={(image) => update({ image })} label="highlight photo" />
+                </Field>
               </div>
             );
           })}
-          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", headline: "", text: "" }] })}>+ Add highlight</button>
+          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", headline: "", text: "", image: "" }] })}>+ Add highlight</button>
         </div>
       </div>
 
-      {/* LIVE PREVIEW DRAWER — renders Sidebar + About from current form values */}
+      {/* LIVE PREVIEW DRAWER — renders Sidebar + About + Highlights from current form values */}
       {preview && (
         <div className="preview-drawer" role="dialog" aria-modal="true">
           <div className="preview-head">
-            <span>Live preview — Sidebar &amp; About (unsaved)</span>
+            <span>Live preview — Sidebar, About &amp; Highlights (unsaved)</span>
             <div className="preview-actions">
               <button className="btn btn-primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button>
               <button className="btn btn-ghost" onClick={() => setPreview(false)}>Close ✕</button>
@@ -212,6 +216,7 @@ export default function ProfileAdmin() {
                 <Sidebar profile={previewProfile} settings={EMPTY_SETTINGS} open onToggle={() => {}} />
                 <div className="preview-layout-main">
                   <About profile={previewProfile} />
+                  <Highlights highlights={previewProfile.highlights} />
                 </div>
               </div>
             </div>

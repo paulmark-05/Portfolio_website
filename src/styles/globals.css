@@ -404,25 +404,33 @@ section{padding:56px 0;position:relative}
 }
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
-/* highlight cards — stacked, one below another, filling the same width
-   as the paragraphs above so nothing inside the section is narrower or
-   offset from anything else in it. */
-.highlights-grid{
-  margin-top:16px;
-  display:flex;flex-direction:column;gap:12px;
+/* ============================================================ HIGHLIGHTS
+   A small gallery of standout moments — an award, recognition, an impact
+   number — each optionally backed by a photo. Its own section (not part
+   of About), separate from Achievements which is reserved for
+   competition wins and other big-ticket recognitions. Reuses the
+   accent-gradient card treatment the old inline About cards had. */
+#highlights{padding-top:44px;padding-bottom:44px}
+.hl-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;
 }
-.commend{
+.hl-card{
   background:linear-gradient(105deg,color-mix(in srgb,var(--accent-2) 8%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));
   border:1px solid color-mix(in srgb,var(--accent-2) 22%,transparent);
   border-left:3px solid var(--accent-2);
-  border-radius:12px;padding:14px 16px;
-  display:flex;gap:14px;align-items:center;
+  border-radius:14px;overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .25s var(--ease),box-shadow .35s;
 }
-.commend-icon{font-size:20px;line-height:1;flex-shrink:0}
-.commend-body{min-width:0}
-.commend-headline{font-family:var(--serif);font-size:15.5px;font-weight:600;color:var(--ink);margin-bottom:4px;line-height:1.25}
-.commend p{font-size:14px;line-height:1.55;color:var(--ink-2)}
-.commend p b{color:var(--accent-2);font-weight:600}
+.hl-card:hover{transform:translateY(-2px);box-shadow:0 20px 50px -30px var(--shadow-med)}
+.hl-card-image{aspect-ratio:16/10;overflow:hidden}
+.hl-card-image img{width:100%;height:100%;object-fit:cover;display:block}
+.hl-card-body{padding:16px 18px}
+.hl-card-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.hl-icon{font-size:20px;line-height:1;flex-shrink:0}
+.hl-headline{font-family:var(--serif);font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.25}
+.hl-text{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.hl-text b{color:var(--accent-2);font-weight:600}
 
 /* ============================================================ EXPERIENCE
    Vertical timeline, strictly newest-start-first. Each node is a row of

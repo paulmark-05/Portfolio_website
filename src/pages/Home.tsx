@@ -7,6 +7,7 @@ import Sidebar from "../components/layout/Sidebar";
 import Footer from "../components/layout/Footer";
 import Seo from "../components/layout/Seo";
 import About from "../components/sections/About";
+import Highlights from "../components/sections/Highlights";
 import Experience from "../components/sections/Experience";
 import Achievements from "../components/sections/Achievements";
 import Stack from "../components/sections/Stack";
@@ -22,6 +23,7 @@ const SIDEBAR_KEY = "np-sidebar-open";
  *  Nav's link list so the menu always matches the page. */
 function renderSection(key: SectionKey, content: SiteContent) {
   switch (key) {
+    case "highlights": return <Highlights key={key} highlights={content.profile.highlights} />;
     case "work": return <Experience key={key} experience={content.experience} />;
     case "stack": return <Stack key={key} skills={content.skills} />;
     case "achievements": return <Achievements key={key} achievements={content.achievements} />;
@@ -35,7 +37,7 @@ export default function Home() {
   // Live CMS → portfolio updates over Supabase Realtime (no refresh needed).
   useRealtimeSync();
   // re-run reveal observer whenever data-driven content changes
-  useReveal([content.projects.length, content.certifications.length, content.settings.sections.length, content.experience.length]);
+  useReveal([content.projects.length, content.certifications.length, content.settings.sections.length, content.experience.length, content.profile.highlights.length]);
 
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     try { return localStorage.getItem(SIDEBAR_KEY) !== "0"; } catch { return true; }

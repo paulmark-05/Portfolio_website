@@ -6,7 +6,7 @@ import { SECTION_LABELS } from "../../lib/sections";
 import { SEED } from "../../lib/content";
 import type { SectionConfig, SectionKey } from "../../lib/types";
 
-const ALL_KEYS: SectionKey[] = ["work", "stack", "achievements", "projects", "certs"];
+const ALL_KEYS: SectionKey[] = ["highlights", "work", "stack", "achievements", "projects", "certs"];
 
 function normalize(raw: unknown): SectionConfig[] {
   if (!Array.isArray(raw) || !raw.length) return SEED.settings.sections;

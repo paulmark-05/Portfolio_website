@@ -2,7 +2,7 @@ export interface CTA { label: string; href: string }
 export interface QuickFact { label: string; value: string }
 
 export interface InfoCard { icon: string; text: string; visible: boolean }
-export interface Highlight { icon: string; headline: string; text: string }   // text is HTML-allowed
+export interface Highlight { icon: string; headline: string; text: string; image: string }   // text is HTML-allowed
 
 export interface Profile {
   name: string;
@@ -88,7 +88,7 @@ export interface Certification {
 
 /** The reorderable/hideable middle sections — About and Contact are
  *  structural (always shown) so they're not part of this list. */
-export type SectionKey = "work" | "stack" | "achievements" | "projects" | "certs";
+export type SectionKey = "highlights" | "work" | "stack" | "achievements" | "projects" | "certs";
 export interface SectionConfig { key: SectionKey; visible: boolean }
 
 export interface Settings {

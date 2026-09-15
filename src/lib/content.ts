@@ -46,6 +46,7 @@ export const SEED: SiteContent = {
         icon: "🏅",
         headline: "Letter of Commendation",
         text: "Awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.",
+        image: "",
       },
     ],
     aboutImage: "",
@@ -219,6 +220,7 @@ export const SEED: SiteContent = {
       "Computer Science undergraduate & full-stack / AI developer. Building software that gets used, from a government grievance platform to agentic AI, computer vision, and accessibility engineering.",
     seoKeywords: ["full-stack developer", "AI engineer", "React", "LangGraph", "computer vision", "accessibility", "WCAG"],
     sections: [
+      { key: "highlights", visible: true },
       { key: "work", visible: true },
       { key: "stack", visible: true },
       { key: "achievements", visible: false },
