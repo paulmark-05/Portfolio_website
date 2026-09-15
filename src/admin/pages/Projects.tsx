@@ -12,11 +12,11 @@ import { useToast } from "../../context/ToastContext";
 interface Row {
   id: string; slug: string; title: string; description: string; date_label: string;
   featured: boolean; active: boolean; tech_stack: string[]; github_url: string; live_url: string;
-  image: string; sort_order: number; date_value: string;
+  demo_url: string; image: string; sort_order: number; date_value: string;
 }
 const empty: Row = {
   id: "", slug: "", title: "", description: "", date_label: "", featured: false, active: false,
-  tech_stack: [], github_url: "", live_url: "", image: "", sort_order: 0,
+  tech_stack: [], github_url: "", live_url: "", demo_url: "", image: "", sort_order: 0,
   date_value: "",
 };
 
@@ -31,13 +31,17 @@ export default function ProjectsAdmin() {
     queryFn: async () => {
       const { data, error } = await supabase!.from("projects").select("*").order("sort_order");
       if (error) throw error;
-      return (data as any[]).map((r) => {
+      const hydrated = (data as any[]).map((r) => {
         const row = { ...empty, ...r } as Row;
         // Hydrate the picker for existing rows: prefer stored date_value,
         // otherwise parse it back out of the human date_label.
         if (!row.date_value) row.date_value = parseToValue(row.date_label);
         return row;
       }) as Row[];
+      // Listed newest-first here for easier browsing — this is just the
+      // admin table's display order; the public site still follows
+      // sort_order (and Featured/Active), untouched by this sort.
+      return hydrated.sort((a, b) => b.date_value.localeCompare(a.date_value));
     },
   });
   const [draft, setDraft] = useState<Row | null>(null);
@@ -67,8 +71,8 @@ export default function ProjectsAdmin() {
           : supabase!.from("projects").insert(payload);
 
       let { error } = await exec(full);
-      if (error && /column .*(date_value|active)/i.test(error.message)) {
-        const { date_value, active, ...safe } = full;
+      if (error && /column .*(date_value|active|demo_url)/i.test(error.message)) {
+        const { date_value, active, demo_url, ...safe } = full;
         ({ error } = await exec(safe));
       }
       if (error) throw error;
@@ -110,8 +114,15 @@ export default function ProjectsAdmin() {
             <Field label="Tech stack (type to search — no manual typing of lists)">
               <TechAutocomplete value={draft.tech_stack} onChange={(tech_stack) => setDraft({ ...draft, tech_stack })} />
             </Field>
-            <Field label="GitHub URL"><input value={draft.github_url} onChange={(e) => setDraft({ ...draft, github_url: e.target.value })} /></Field>
-            <Field label="Live URL"><input value={draft.live_url} onChange={(e) => setDraft({ ...draft, live_url: e.target.value })} /></Field>
+            <Field label="GitHub URL (optional — shows a Code button)">
+              <input value={draft.github_url} onChange={(e) => setDraft({ ...draft, github_url: e.target.value })} placeholder="https://github.com/…" />
+            </Field>
+            <Field label="Live URL (optional — shows a Live site button)">
+              <input value={draft.live_url} onChange={(e) => setDraft({ ...draft, live_url: e.target.value })} placeholder="https://…" />
+            </Field>
+            <Field label="Demo video URL (optional — shows a Demo button)">
+              <input value={draft.demo_url} onChange={(e) => setDraft({ ...draft, demo_url: e.target.value })} placeholder="https://youtube.com/… or a Loom link" />
+            </Field>
             <div className="admin-2col">
               <Field label="Active">
                 <label className="admin-check">
@@ -124,7 +135,7 @@ export default function ProjectsAdmin() {
                 <label className="admin-check">
                   <input type="checkbox" checked={draft.featured}
                     onChange={(e) => setDraft({ ...draft, featured: e.target.checked })} />
-                  <span>Shows a Featured badge and surfaces it in Selected Work</span>
+                  <span>Surfaces it in Selected Work on the homepage — otherwise it's only in the full archive</span>
                 </label>
               </Field>
             </div>

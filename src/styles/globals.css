@@ -687,12 +687,6 @@ section{padding:56px 0;position:relative}
   font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink);
   font-variation-settings:"opsz" 50;line-height:1.2;
 }
-.proj-row .featbadge{
-  font-family:var(--mono);font-size:9.5px;color:var(--accent);
-  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);
-  background:color-mix(in srgb,var(--accent) 6%,transparent);
-  padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;
-}
 .proj-row .date{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:auto}
 /* KPI stat — mobile-only, pulled from the first <span class="m"> metric */
 .proj-kpi{display:none}
@@ -942,7 +936,7 @@ footer span{color:var(--accent)}
 /* ============================================================ RESPONSIVE */
 @media(max-width:1000px){
   .layout{grid-template-columns:250px 1fr;gap:0 40px}
-  .proj-row{grid-template-columns:120px 1fr;gap:16px}.proj-row-actions{grid-column:1/-1;flex-direction:row}
+  .proj-row{grid-template-columns:120px 1fr;gap:16px}.proj-row-actions{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-self:auto}
   .certs-layout{grid-template-columns:35% 65%;gap:32px}
 }
 @media(max-width:900px){
@@ -986,7 +980,8 @@ footer span{color:var(--accent)}
     font-family:var(--serif);font-style:italic;font-weight:500;
     font-size:clamp(15px,3.6vw,17px);line-height:1.25;color:var(--accent);
   }
-  .proj-row-actions{flex-direction:row;min-width:0;padding:0 18px 18px;margin-top:auto}
+  .proj-row-actions{flex-direction:row;flex-wrap:wrap;min-width:0;padding:0 18px 18px;margin-top:auto}
+  .proj-row-actions .plink{flex:1 1 auto}
   .proj-row .date{margin-left:0}
   .exp-node{grid-template-columns:20px 1fr;gap:0 12px}
   .exp-node-date{display:none}

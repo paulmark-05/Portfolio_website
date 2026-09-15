@@ -84,7 +84,8 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           id: r.id, slug: r.slug, title: r.title, description: r.description ?? "",
           dateLabel: r.date_label ?? "", featured: !!r.featured, active: !!r.active,
           techStack: r.tech_stack ?? [], githubUrl: r.github_url ?? "",
-          liveUrl: r.live_url ?? "", image: mediaUrl(r.image ?? ""), sortOrder: r.sort_order ?? 0,
+          liveUrl: r.live_url ?? "", demoUrl: r.demo_url ?? "",
+          image: mediaUrl(r.image ?? ""), sortOrder: r.sort_order ?? 0,
         }))
       : SEED.projects;
 

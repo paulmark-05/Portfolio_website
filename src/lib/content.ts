@@ -118,7 +118,7 @@ export const SEED: SiteContent = {
       description:
         'Audited two production web apps for <span class="m">WCAG 2.1 AA</span> compliance with axe-core, identifying 4 violation types across 18 elements. Manually cross-checked automated findings with VoiceOver and NVDA to separate confirmed violations from flags needing human judgment.',
       techStack: ["axe-core", "WCAG 2.1", "VoiceOver", "NVDA"],
-      githubUrl: "", liveUrl: "",
+      githubUrl: "", liveUrl: "", demoUrl: "",
       image: "", sortOrder: 0,
     },
     {
@@ -127,7 +127,7 @@ export const SEED: SiteContent = {
       description:
         'Full-stack registration site for a government-run sports event: multi-step flow, payment capture, and slot-cap enforcement, live in production. Real-time seat counters via Socket.IO with <span class="m">no polling</span>, email OTP verification, and a QR-first fallback after diagnosing a bank-side UPI deep-link restriction.',
       techStack: ["Node.js", "Express", "Google Sheets API", "Socket.io"],
-      githubUrl: "", liveUrl: "",
+      githubUrl: "", liveUrl: "", demoUrl: "",
       image: "", sortOrder: 1,
     },
     {
@@ -137,7 +137,7 @@ export const SEED: SiteContent = {
         'Agentic RAG assistant built in LangGraph with a multi-node workflow (retrieval, tool use, self-evaluation), reaching <span class="m">90% task success</span> and <span class="m">0.84 faithfulness / 0.87 relevance</span> on RAGAS. Conversational memory + live web search to cut hallucination.',
       techStack: ["Python", "LangGraph", "ChromaDB", "Streamlit", "Groq", "RAGAS"],
       githubUrl: "https://github.com/nayanipaul/medbot",
-      liveUrl: "https://medbot-demo.streamlit.app",
+      liveUrl: "https://medbot-demo.streamlit.app", demoUrl: "",
       image: "/images/medbot.png", sortOrder: 2,
     },
     {
@@ -147,7 +147,7 @@ export const SEED: SiteContent = {
         'Real-time object detection (YOLOv8n) with threaded capture at <span class="m">25 to 30 FPS at 640x480 on CPU-only hardware</span>. Pinhole-geometry distance/direction estimation and a priority-based offline voice-alert engine for nearby hazards.',
       techStack: ["Python", "YOLOv8", "OpenCV", "pyttsx3", "IP Webcam"],
       githubUrl: "https://github.com/nayanipaul/vision-assist",
-      liveUrl: "https://github.com/nayanipaul/vision-assist#demo",
+      liveUrl: "", demoUrl: "https://github.com/nayanipaul/vision-assist#demo",
       image: "/images/vision-assist.png", sortOrder: 3,
     },
     {
@@ -157,7 +157,7 @@ export const SEED: SiteContent = {
         'AI agent using <span class="m">Gemini Vision</span> for photo-to-macro conversion, Supabase OTP auth, an AI recipe generator, cheat-meal tracker, and automated weekly PDF progress reports.',
       techStack: ["React", "Supabase", "Gemini API", "Nano Banana"],
       githubUrl: "https://github.com/nayanipaul/nutricoach",
-      liveUrl: "https://nutricoach-demo.vercel.app",
+      liveUrl: "https://nutricoach-demo.vercel.app", demoUrl: "",
       image: "/images/nutricoach.png", sortOrder: 4,
     },
     {
@@ -167,7 +167,7 @@ export const SEED: SiteContent = {
         'Flask backend for secure Gemini integration turning raw datasets into <span class="m">actionable AI insights</span>, with dynamic filtering, an automated cleaning pipeline, and CSV/PDF export.',
       techStack: ["Flask", "Vanilla JS", "Gemini API", "Pandas"],
       githubUrl: "https://github.com/nayanipaul/datavizard",
-      liveUrl: "https://datavizard-demo.onrender.com",
+      liveUrl: "https://datavizard-demo.onrender.com", demoUrl: "",
       image: "/images/datavizard.png", sortOrder: 5,
     },
   ],

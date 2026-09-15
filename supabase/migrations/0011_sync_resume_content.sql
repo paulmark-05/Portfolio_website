@@ -74,32 +74,34 @@ insert into public.skills (category,name,full_name,color,sort_order) values
 ('stack','NumPy','NumPy','#013243',18);
 
 -- ---------- projects (replace all rows) ----------
+-- self-contained: demo_url may not exist yet if this runs before 0015.
+alter table public.projects add column if not exists demo_url text default '';
 delete from public.projects;
-insert into public.projects (slug,title,description,date_label,featured,active,tech_stack,github_url,live_url,image,sort_order) values
+insert into public.projects (slug,title,description,date_label,featured,active,tech_stack,github_url,live_url,demo_url,image,sort_order) values
 ('accessibility-audit','Accessibility Audit: Unity Run 2026 & ZSB VMS',
  'Audited two production web apps for <span class="m">WCAG 2.1 AA</span> compliance with axe-core, identifying 4 violation types across 18 elements. Manually cross-checked automated findings with VoiceOver and NVDA to separate confirmed violations from flags needing human judgment.',
  'Sept 2026', true, true, array['axe-core','WCAG 2.1','VoiceOver','NVDA'],
- '','','',0),
+ '','','','',0),
 ('unity-run-2026','Unity Run 2026: Event Registration Platform',
  'Full-stack registration site for a government-run sports event: multi-step flow, payment capture, and slot-cap enforcement, live in production. Real-time seat counters via Socket.IO with <span class="m">no polling</span>, email OTP verification, and a QR-first fallback after diagnosing a bank-side UPI deep-link restriction.',
  '2026', true, true, array['Node.js','Express','Google Sheets API','Socket.io'],
- '','','',1),
+ '','','','',1),
 ('medbot','MedBot: Agentic AI Healthcare Assistant',
  'Agentic RAG assistant built in LangGraph with a multi-node workflow (retrieval, tool use, self-evaluation), reaching <span class="m">90% task success</span> and <span class="m">0.84 faithfulness / 0.87 relevance</span> on RAGAS. Conversational memory + live web search to cut hallucination.',
  'Apr 2026', true, true, array['Python','LangGraph','ChromaDB','Streamlit','Groq','RAGAS'],
- 'https://github.com/nayanipaul/medbot','https://medbot-demo.streamlit.app','/images/medbot.png',2),
+ 'https://github.com/nayanipaul/medbot','https://medbot-demo.streamlit.app','','/images/medbot.png',2),
 ('vision-assist','Vision Assistance for the Visually Impaired',
  'Real-time object detection (YOLOv8n) with threaded capture at <span class="m">25 to 30 FPS at 640x480 on CPU-only hardware</span>. Pinhole-geometry distance/direction estimation and a priority-based offline voice-alert engine for nearby hazards.',
  'Mar 2026', false, true, array['Python','YOLOv8','OpenCV','pyttsx3','IP Webcam'],
- 'https://github.com/nayanipaul/vision-assist','https://github.com/nayanipaul/vision-assist#demo','/images/vision-assist.png',3),
+ 'https://github.com/nayanipaul/vision-assist','','https://github.com/nayanipaul/vision-assist#demo','/images/vision-assist.png',3),
 ('nutricoach','NutriCoach: AI Diet Agent',
  'AI agent using <span class="m">Gemini Vision</span> for photo-to-macro conversion, Supabase OTP auth, an AI recipe generator, cheat-meal tracker, and automated weekly PDF progress reports.',
  'Dec 2025', false, true, array['React','Supabase','Gemini API','Nano Banana'],
- 'https://github.com/nayanipaul/nutricoach','https://nutricoach-demo.vercel.app','/images/nutricoach.png',4),
+ 'https://github.com/nayanipaul/nutricoach','https://nutricoach-demo.vercel.app','','/images/nutricoach.png',4),
 ('datavizard','DataVizard: AI Analytics Dashboard',
  'Flask backend for secure Gemini integration turning raw datasets into <span class="m">actionable AI insights</span>, with dynamic filtering, an automated cleaning pipeline, and CSV/PDF export.',
  'Jun 2025', false, false, array['Flask','Vanilla JS','Gemini API','Pandas'],
- 'https://github.com/nayanipaul/datavizard','https://datavizard-demo.onrender.com','/images/datavizard.png',5);
+ 'https://github.com/nayanipaul/datavizard','https://datavizard-demo.onrender.com','','/images/datavizard.png',5);
 
 -- ---------- certifications (replace all rows) ----------
 delete from public.certifications;

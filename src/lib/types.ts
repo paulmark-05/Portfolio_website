@@ -34,6 +34,7 @@ export interface Project {
   techStack: string[];
   githubUrl: string;
   liveUrl: string;
+  demoUrl: string;              // walkthrough video showing the features in action
   image: string;
   sortOrder: number;
 }

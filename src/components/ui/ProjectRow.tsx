@@ -13,6 +13,9 @@ const icCode = (
 const icClose = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
 );
+const icPlay = (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+);
 
 /** One horizontal project row: preview LEFT, content CENTER, actions RIGHT.
  *  Shared by the homepage Selected Work and the /projects archive. */
@@ -61,7 +64,6 @@ export default function ProjectRow({ p }: { p: Project }) {
           <div className="proj-row-head">
             <h3>{p.title}</h3>
             {p.active && <span className="activebadge"><span className="adot" />Active</span>}
-            {p.featured && <span className="featbadge">Featured</span>}
             <span className="date">{p.dateLabel}</span>
           </div>
           {kpi && <div className="proj-kpi"><b>{kpi}</b></div>}
@@ -85,7 +87,8 @@ export default function ProjectRow({ p }: { p: Project }) {
 
         <div className="proj-row-actions">
           {p.githubUrl && <a className="plink" href={p.githubUrl} target="_blank" rel="noopener">{icCode} Code</a>}
-          {p.liveUrl && <a className="plink live" href={p.liveUrl} target="_blank" rel="noopener">{icArrow} Live demo</a>}
+          {p.liveUrl && <a className="plink live" href={p.liveUrl} target="_blank" rel="noopener">{icArrow} Live site</a>}
+          {p.demoUrl && <a className="plink" href={p.demoUrl} target="_blank" rel="noopener">{icPlay} Demo</a>}
         </div>
       </article>
 
