@@ -405,47 +405,42 @@ section{padding:56px 0;position:relative}
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
 /* ============================================================ HIGHLIGHTS
-   Bento grid: one big lead tile (2 cols wide) with the smaller tiles
-   running the FULL height beside it (1 col wide, spanning both rows) —
-   not 1x1 tiles left short with dead space under them. The lead gets a
-   full-width photo since it has the room; the rest show a small corner
-   thumbnail instead of a full image, so a long caption can't blow a
-   tile's height out. Separate section from Achievements, which is
-   reserved for competition wins and other big-ticket recognitions — this
-   is smaller work moments. */
+   Editorial-clippings layout: one lead story on the left, two shorter
+   ones stacked on the right at matching total height — like a newspaper
+   page lead plus two sidebar briefs, not a uniform card grid. Sharper
+   corners, a hairline top rule instead of a colored fill, a small
+   tracked-caps kicker over each headline, and a light sepia tone on
+   photos (mostly scanned documents here) all lean into that print feel.
+   Separate section from Achievements, which is reserved for competition
+   wins and other big-ticket recognitions — this is smaller work moments. */
 #highlights{padding-top:44px;padding-bottom:44px}
 #highlights .sec-head{margin-bottom:32px}
 .hl-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto);gap:16px;
+  display:grid;grid-template-columns:1.7fr 1fr;grid-auto-rows:minmax(0,1fr);gap:22px;
 }
-.hl-lead{grid-column:span 2;grid-row:span 2}
-.hl-card:not(.hl-lead){grid-row:span 2}
+.hl-lead{grid-row:span 2}
 .hl-card{
   position:relative;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:16px;overflow:hidden;
+  border-radius:6px;overflow:hidden;
   display:flex;flex-direction:column;
   box-shadow:0 1px 0 var(--shadow-soft);
   transition:transform .25s var(--ease),box-shadow .35s,border-color .25s;
 }
 .hl-card:hover{transform:translateY(-3px);box-shadow:0 24px 60px -32px var(--shadow-med);border-color:var(--line-2)}
-/* tinted background instead of a left stripe — a colored bar running
-   alongside a real photo read as a stray line rather than an accent */
-.hl-lead{
-  background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 9%,var(--card)),var(--card) 58%);
-  border-color:color-mix(in srgb,var(--accent) 26%,var(--line));
-}
-.hl-card:not(.hl-lead){
-  background:linear-gradient(160deg,color-mix(in srgb,var(--accent-2) 7%,var(--card)),var(--card) 62%);
-  border-color:color-mix(in srgb,var(--accent-2) 20%,var(--line));
+/* hairline masthead rule — the lead's photo already gives it a visual
+   top, so the rule is reserved for the two text-led briefs */
+.hl-card:not(.hl-lead)::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent-2);
 }
 .hl-card-image{
   all:unset;position:relative;display:block;aspect-ratio:16/10;overflow:hidden;box-sizing:border-box;flex-shrink:0;
-  border-bottom:1px solid color-mix(in srgb,var(--accent) 16%,var(--line));
+  border-bottom:1px solid var(--line);
 }
 .hl-card-image.clickable{cursor:zoom-in}
-.hl-card-image img{width:100%;height:100%;object-fit:cover;display:block}
+.hl-card-image img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.12) saturate(1.05) contrast(1.02)}
 .hl-image-expand{
   position:absolute;right:10px;bottom:10px;z-index:2;
   font-family:var(--mono);font-size:11px;color:var(--paper);
@@ -454,39 +449,40 @@ section{padding:56px 0;position:relative}
 }
 .hl-card-image.clickable:hover .hl-image-expand{opacity:1}
 .hl-card-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;min-height:0}
-.hl-lead .hl-card-body{padding:22px 24px 24px}
-/* non-lead tiles now run the lead's full height (see .hl-grid above) —
+.hl-lead .hl-card-body{padding:24px 26px 26px}
+/* the two briefs run the lead's full height (see .hl-grid above) —
    center their content instead of pinning it to the top with empty
    space below, so the extra height reads as intentional. */
 .hl-card:not(.hl-lead) .hl-card-body{justify-content:center}
-.hl-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.hl-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hl-kicker-row{display:flex;align-items:center;gap:8px;min-width:0}
 .hl-icon{
-  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;
   background:color-mix(in srgb,var(--accent) 12%,transparent);
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent);
-  font-size:16px;line-height:1;
+  font-size:13px;line-height:1;
 }
-.hl-lead .hl-icon{width:44px;height:44px;border-radius:12px;font-size:20px}
-/* small clickable proof-photo thumbnail on non-lead tiles */
+.hl-lead .hl-icon{width:32px;height:32px;font-size:15px}
+.hl-kicker{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--accent-2);
+}
+/* small clickable proof-photo thumbnail on the briefs */
 .hl-thumb{
-  all:unset;width:32px;height:32px;border-radius:8px;overflow:hidden;flex-shrink:0;box-sizing:border-box;
+  all:unset;width:32px;height:32px;border-radius:6px;overflow:hidden;flex-shrink:0;box-sizing:border-box;
   border:1px solid var(--line);display:block;cursor:zoom-in;transition:border-color .2s,transform .2s var(--ease);
 }
 .hl-thumb:hover{border-color:var(--accent);transform:scale(1.06)}
-.hl-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.hl-headline{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:8px}
-.hl-lead .hl-headline{font-size:22px;margin-bottom:10px}
-.hl-text{font-size:13.5px;line-height:1.62;color:var(--ink-2)}
-.hl-lead .hl-text{font-size:14.5px}
+.hl-thumb img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.12) saturate(1.05)}
+.hl-headline{font-family:var(--serif);font-size:16.5px;font-weight:600;color:var(--ink);line-height:1.28;margin-bottom:8px;letter-spacing:-.01em}
+.hl-lead .hl-headline{font-size:25px;margin-bottom:11px}
+.hl-text{font-size:13.5px;line-height:1.64;color:var(--ink-2)}
+.hl-lead .hl-text{font-size:15px}
 .hl-text b{color:var(--accent-2);font-weight:600}
-@media(max-width:900px){
-  .hl-grid{grid-template-columns:repeat(2,1fr)}
-  .hl-card:not(.hl-lead){grid-row:span 1}
-  .hl-card:not(.hl-lead) .hl-card-body{justify-content:flex-start}
-}
 @media(max-width:760px){
   .hl-grid{grid-template-columns:1fr;grid-auto-rows:auto}
-  .hl-lead{grid-column:span 1;grid-row:span 1}
+  .hl-lead{grid-row:span 1}
+  .hl-card:not(.hl-lead) .hl-card-body{justify-content:flex-start}
 }
 
 /* ============================================================ EXPERIENCE

@@ -3,15 +3,14 @@ import type { Highlight } from "../../lib/types";
 import SectionTag from "../ui/SectionTag";
 import ImageLightbox from "../ui/ImageLightbox";
 
-/** Highlights of my work — a bento grid of standout moments (an award,
- *  a piece of recognition, an impact number), same layout language as
- *  Achievements (lead tile spans 2x2 among smaller 1x1 tiles), but its own
- *  section — Achievements is reserved for competition wins and other
- *  big-ticket recognitions, not these smaller work highlights. The lead
- *  card shows its photo full-width; smaller tiles show a corner thumbnail
- *  instead so one long caption can't blow a row's height out. Either way,
- *  a photo opens in the same full-screen lightbox the project previews
- *  use. */
+/** Highlights of my work — an editorial-clippings layout: one lead story
+ *  on the left, two shorter ones stacked on the right, all matching the
+ *  same total height. Its own section — Achievements is reserved for
+ *  competition wins and other big-ticket recognitions, not these smaller
+ *  work highlights. The lead card shows its photo full-width; the shorter
+ *  cards show a small corner thumbnail instead so one long caption can't
+ *  blow a tile's height out. Either way, a photo opens in the same
+ *  full-screen lightbox the project previews use. */
 export default function Highlights({ highlights }: { highlights: Highlight[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   if (!highlights.length) return null;
@@ -41,7 +40,10 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
                 )}
                 <div className="hl-card-body">
                   <div className="hl-card-top">
-                    <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>
+                    <div className="hl-kicker-row">
+                      <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>
+                      <span className="hl-kicker">Highlight</span>
+                    </div>
                     {!isLead && h.image && (
                       <button
                         type="button"
