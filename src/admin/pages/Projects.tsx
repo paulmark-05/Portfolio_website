@@ -12,12 +12,12 @@ import { useToast } from "../../context/ToastContext";
 interface Row {
   id: string; slug: string; title: string; description: string; date_label: string;
   featured: boolean; active: boolean; tech_stack: string[]; github_url: string; live_url: string;
-  image: string; sort_order: number; date_value: string; current: boolean;
+  image: string; sort_order: number; date_value: string;
 }
 const empty: Row = {
   id: "", slug: "", title: "", description: "", date_label: "", featured: false, active: false,
   tech_stack: [], github_url: "", live_url: "", image: "", sort_order: 0,
-  date_value: "", current: false,
+  date_value: "",
 };
 
 const slugify = (s: string) =>
@@ -36,7 +36,6 @@ export default function ProjectsAdmin() {
         // Hydrate the picker for existing rows: prefer stored date_value,
         // otherwise parse it back out of the human date_label.
         if (!row.date_value) row.date_value = parseToValue(row.date_label);
-        if (r.current == null) row.current = /present/i.test(row.date_label);
         return row;
       }) as Row[];
     },
@@ -49,9 +48,10 @@ export default function ProjectsAdmin() {
     if (!draft) return;
     setBusy(true);
     await runToast(async () => {
-      // Date label auto-built from the month-year picker + "currently active".
+      // Date label auto-built from the month-year picker — an active
+      // (still-ongoing) project shows "— Present" instead of an end date.
       const base = formatMonthYear(draft.date_value);
-      const date_label = draft.current
+      const date_label = draft.active
         ? (base ? `${base} — Present` : "Present")
         : base || draft.date_label;
       const full: any = {
@@ -67,8 +67,8 @@ export default function ProjectsAdmin() {
           : supabase!.from("projects").insert(payload);
 
       let { error } = await exec(full);
-      if (error && /column .*(date_value|current|active)/i.test(error.message)) {
-        const { date_value, current, active, ...safe } = full;
+      if (error && /column .*(date_value|active)/i.test(error.message)) {
+        const { date_value, active, ...safe } = full;
         ({ error } = await exec(safe));
       }
       if (error) throw error;
@@ -104,13 +104,6 @@ export default function ProjectsAdmin() {
             <Field label="Date">
               <MonthYearPicker value={draft.date_value} onChange={(v) => setDraft({ ...draft, date_value: v })} disabled={false} />
             </Field>
-            <Field label="Status">
-              <label className="admin-check">
-                <input type="checkbox" checked={draft.current}
-                  onChange={(e) => setDraft({ ...draft, current: e.target.checked })} />
-                <span>Currently active (shows “— Present”)</span>
-              </label>
-            </Field>
             <FieldBlock label="Description">
               <RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} rows={4} allowHighlight />
             </FieldBlock>
@@ -119,20 +112,22 @@ export default function ProjectsAdmin() {
             </Field>
             <Field label="GitHub URL"><input value={draft.github_url} onChange={(e) => setDraft({ ...draft, github_url: e.target.value })} /></Field>
             <Field label="Live URL"><input value={draft.live_url} onChange={(e) => setDraft({ ...draft, live_url: e.target.value })} /></Field>
-            <Field label="Status">
-              <label className="admin-check">
-                <input type="checkbox" checked={draft.active}
-                  onChange={(e) => setDraft({ ...draft, active: e.target.checked })} />
-                <span>Currently Active — counts toward the “active” metric and shows an Active badge</span>
-              </label>
-            </Field>
-            <Field label="Visibility">
-              <label className="admin-check">
-                <input type="checkbox" checked={draft.featured}
-                  onChange={(e) => setDraft({ ...draft, featured: e.target.checked })} />
-                <span>Feature this project — shows a “Featured” badge and surfaces it in Selected Work</span>
-              </label>
-            </Field>
+            <div className="admin-2col">
+              <Field label="Active">
+                <label className="admin-check">
+                  <input type="checkbox" checked={draft.active}
+                    onChange={(e) => setDraft({ ...draft, active: e.target.checked })} />
+                  <span>Still ongoing — shows an Active badge, “— Present” on the date, and counts toward the active metric</span>
+                </label>
+              </Field>
+              <Field label="Featured">
+                <label className="admin-check">
+                  <input type="checkbox" checked={draft.featured}
+                    onChange={(e) => setDraft({ ...draft, featured: e.target.checked })} />
+                  <span>Shows a Featured badge and surfaces it in Selected Work</span>
+                </label>
+              </Field>
+            </div>
             <Field label="Preview image">
               <ImageUploader value={draft.image} onChange={(path) => setDraft({ ...draft, image: path })} label="preview image" />
             </Field>
