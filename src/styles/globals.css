@@ -786,7 +786,12 @@ section{padding:56px 0;position:relative}
   border-radius:18px;
   overflow:hidden;
   box-shadow:0 40px 120px -20px rgba(0,0,0,.7);
-  display:flex;flex-direction:column;
+  /* grid (not flex) so the body row gets a genuinely definite height that
+     the image's width/height:100% can resolve against — flex:1 on a
+     scrollable flex item left the cross size indefinite for percentage
+     children in practice, so the image kept rendering at its full natural
+     size and forcing a scrollbar instead of fitting on one screen. */
+  display:grid;grid-template-rows:auto minmax(0,1fr);
   transform:scale(.96);
   transition:transform .35s var(--ease);
 }
@@ -812,14 +817,19 @@ section{padding:56px 0;position:relative}
 .cert-modal-close:hover{border-color:var(--accent);color:var(--accent)}
 .cert-modal-close svg{width:16px;height:16px}
 .cert-modal-body{
-  flex:1;overflow:auto;
-  display:grid;place-items:center;
-  padding:24px;
+  min-height:0;overflow:auto;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;box-sizing:border-box;
   background:var(--paper-2);
 }
+/* flex (not grid) so the image's max-height:100% resolves against this
+   box's own (now-definite, via flex:1+min-height:0) height — a grid with
+   place-items:center never gives an auto row a definite size to clamp
+   against, so the image rendered at full natural height and forced this
+   container to scroll instead of fitting the certificate on one screen. */
 .cert-modal-body img,
 .cert-modal-body iframe{
-  max-width:100%;max-height:100%;
+  display:block;width:100%;height:100%;object-fit:contain;
   border-radius:10px;
   box-shadow:0 18px 50px -20px var(--shadow-med);
   border:1px solid var(--line);
