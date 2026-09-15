@@ -405,19 +405,21 @@ section{padding:56px 0;position:relative}
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
 /* ============================================================ HIGHLIGHTS
-   Bento grid — same 4-col/lead-tile-spans-2x2 pattern as Achievements, so
-   the two sections read as one design language. The lead (first) card
-   gets a full-width photo since it has the room; the rest show a small
-   corner thumbnail instead of a full image, so one long caption in a 1x1
-   tile can't blow that row's height out and throw off its neighbors.
-   Separate section from Achievements, which is reserved for competition
-   wins and other big-ticket recognitions — this is smaller work moments. */
+   Bento grid: one big lead tile (2 cols wide) with the smaller tiles
+   running the FULL height beside it (1 col wide, spanning both rows) —
+   not 1x1 tiles left short with dead space under them. The lead gets a
+   full-width photo since it has the room; the rest show a small corner
+   thumbnail instead of a full image, so a long caption can't blow a
+   tile's height out. Separate section from Achievements, which is
+   reserved for competition wins and other big-ticket recognitions — this
+   is smaller work moments. */
 #highlights{padding-top:44px;padding-bottom:44px}
 #highlights .sec-head{margin-bottom:32px}
 .hl-grid{
   display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto);gap:16px;
 }
 .hl-lead{grid-column:span 2;grid-row:span 2}
+.hl-card:not(.hl-lead){grid-row:span 2}
 .hl-card{
   position:relative;
   background:var(--card);
@@ -453,6 +455,10 @@ section{padding:56px 0;position:relative}
 .hl-card-image.clickable:hover .hl-image-expand{opacity:1}
 .hl-card-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;min-height:0}
 .hl-lead .hl-card-body{padding:22px 24px 24px}
+/* non-lead tiles now run the lead's full height (see .hl-grid above) —
+   center their content instead of pinning it to the top with empty
+   space below, so the extra height reads as intentional. */
+.hl-card:not(.hl-lead) .hl-card-body{justify-content:center}
 .hl-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .hl-icon{
   width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;
@@ -475,6 +481,8 @@ section{padding:56px 0;position:relative}
 .hl-text b{color:var(--accent-2);font-weight:600}
 @media(max-width:900px){
   .hl-grid{grid-template-columns:repeat(2,1fr)}
+  .hl-card:not(.hl-lead){grid-row:span 1}
+  .hl-card:not(.hl-lead) .hl-card-body{justify-content:flex-start}
 }
 @media(max-width:760px){
   .hl-grid{grid-template-columns:1fr;grid-auto-rows:auto}
