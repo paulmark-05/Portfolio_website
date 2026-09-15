@@ -2,8 +2,22 @@ import { useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { mediaUrl } from "../../lib/queries";
 
+// pdfjs-dist is a ~480KB library — loaded on demand only when someone
+// actually uploads a PDF, instead of a static import, which would ship it
+// to every visitor (this whole admin bundle isn't itself code-split from
+// the public site yet) even though almost nobody touches this path.
+let pdfjsReady: ReturnType<typeof loadPdfjs> | null = null;
+function loadPdfjs() {
+  return import("pdfjs-dist").then(async (lib) => {
+    const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+    lib.GlobalWorkerOptions.workerSrc = worker.default;
+    return lib;
+  });
+}
+
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB raw upload ceiling (pre-downscale)
-const ACCEPTED = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif"];
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif"];
+const ACCEPTED = [...IMAGE_TYPES, "application/pdf"];
 
 /**
  * Reusable image field for the CMS.
@@ -31,8 +45,8 @@ export default function ImageUploader({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const validate = (file: File): string | null => {
-    if (!ACCEPTED.includes(file.type)) return "Use a PNG, JPEG, WebP, GIF, or AVIF image.";
-    if (file.size > MAX_BYTES) return "Image is larger than 8 MB. Please pick a smaller file.";
+    if (!ACCEPTED.includes(file.type)) return "Use a PNG, JPEG, WebP, GIF, AVIF image, or a PDF.";
+    if (file.size > MAX_BYTES) return "File is larger than 8 MB. Please pick a smaller file.";
     return null;
   };
 
@@ -41,10 +55,14 @@ export default function ImageUploader({
     if (!supabase) { setErr("Supabase isn't configured."); return; }
     const v = validate(file);
     if (v) { setErr(v); return; }
+    const isPdf = file.type === "application/pdf";
 
     setBusy(true);
     try {
-      const blob = await downscale(file, 1400);
+      // A PDF's first page gets rasterized to an image client-side, so
+      // everything downstream (storage, <img> previews, the public site)
+      // stays exactly the same as a regular image upload.
+      const blob = isPdf ? await pdfFirstPageToBlob(file, 1400) : await downscale(file, 1400);
       const safeName = file.name.replace(/[^a-z0-9.]+/gi, "-").toLowerCase();
       const path = `uploads/${Date.now()}-${safeName}`;
       const { error } = await supabase.storage
@@ -53,7 +71,7 @@ export default function ImageUploader({
       if (error) throw error;
       onChange(path);
     } catch (e: any) {
-      setErr(e?.message ?? "Upload failed.");
+      setErr(e?.message ?? (isPdf ? "Couldn't read that PDF." : "Upload failed."));
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -109,6 +127,28 @@ export default function ImageUploader({
       {busy && <span className="admin-uploader-hint">Uploading…</span>}
       {err && <span className="admin-error" role="alert">{err}</span>}
     </div>
+  );
+}
+
+/** Rasterizes a PDF's first page to a WebP blob at up to `maxW` wide, so a
+ *  certificate or project doc handed over as a PDF drops straight into the
+ *  same image pipeline (storage, <img> previews) as a PNG/JPEG upload. */
+async function pdfFirstPageToBlob(file: File, maxW: number): Promise<Blob> {
+  if (!pdfjsReady) pdfjsReady = loadPdfjs();
+  const pdfjsLib = await pdfjsReady;
+  const data = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data }).promise;
+  const page = await pdf.getPage(1);
+  const unscaled = page.getViewport({ scale: 1 });
+  const viewport = page.getViewport({ scale: maxW / unscaled.width });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(viewport.width);
+  canvas.height = Math.round(viewport.height);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas isn't supported in this browser.");
+  await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+  return await new Promise<Blob>((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Couldn't render that PDF."))), "image/webp", 0.9)
   );
 }
 

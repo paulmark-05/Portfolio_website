@@ -2,27 +2,13 @@ import { useMemo, useRef, useState } from "react";
 import type { Certification } from "../../lib/types";
 import SectionTag from "../ui/SectionTag";
 
-const MONTHS: Record<string, number> = {
-  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
-};
-
-/** Turn a date label ("Apr 2026", "2025") into a sortable "month index"
- *  so the list can be ordered newest-first automatically, regardless of
- *  the order certs were entered in. */
-function dateKeyOf(label: string): number {
-  const my = (label || "").match(/([A-Za-z]{3,9})\.?\s+(\d{4})/);
-  if (my) return Number(my[2]) * 12 + (MONTHS[my[1].slice(0, 3).toLowerCase()] ?? 0);
-  const y = (label || "").match(/(\d{4})/);
-  return y ? Number(y[1]) * 12 : 0;
-}
-
 /** Certificates — clean two-pane viewer: a certificate LIST on the left, a single
  *  selected card on the right (fade/slide on change). No carousel, no arrows,
- *  no faded side cards. */
+ *  no faded side cards. Order is set manually in the admin CMS (reorder
+ *  controls there), not inferred from the date label. */
 export default function Certs({ certs: certsProp }: { certs: Certification[] }) {
   const certs = useMemo(
-    () => [...certsProp].sort((a, b) => dateKeyOf(b.dateLabel) - dateKeyOf(a.dateLabel) || a.sortOrder - b.sortOrder),
+    () => [...certsProp].sort((a, b) => a.sortOrder - b.sortOrder),
     [certsProp]
   );
   const [idx, setIdx] = useState(0);
@@ -54,7 +40,11 @@ export default function Certs({ certs: certsProp }: { certs: Certification[] }) 
                 className={`certs-list-item${i === idx ? " active" : ""}`}
                 onClick={() => select(i)}
               >
-                <span className="cli-title">{c.title}</span>
+                <span className="cli-index">{String(i + 1).padStart(2, "0")}</span>
+                <span className="cli-text">
+                  <span className="cli-title">{c.title}</span>
+                  <span className="cli-meta">{c.issuer}</span>
+                </span>
               </button>
             ))}
           </aside>
@@ -76,10 +66,11 @@ export default function Certs({ certs: certsProp }: { certs: Certification[] }) 
                   <span>{active.dateLabel}</span>
                 </div>
                 {active.description && <p dangerouslySetInnerHTML={{ __html: active.description }} />}
-                <div className="cert-actions">
-                  <button className="btn btn-ghost cert-cred" onClick={() => setModal(true)}>View credential ↗</button>
-                  {active.image && <a className="btn btn-ghost cert-cred" href={active.image} download target="_blank" rel="noopener">Download ↓</a>}
-                </div>
+                {active.image && (
+                  <div className="cert-actions">
+                    <a className="btn btn-ghost cert-cred" href={active.image} download target="_blank" rel="noopener">Download ↓</a>
+                  </div>
+                )}
               </div>
             </article>
           </div>

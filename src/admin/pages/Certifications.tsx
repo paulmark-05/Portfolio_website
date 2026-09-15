@@ -25,9 +25,30 @@ export default function CertificationsAdmin() {
     }, { loading: draft.id ? "Saving…" : "Adding…", success: draft.id ? "Certificate updated" : "Certificate added", error: "Failed to save certificate" });
     setBusy(false); };
   const remove = async (r: Row) => { await run(async () => { const { error } = await supabase!.from("certifications").delete().eq("id", r.id); if (error) throw error; refresh(); }, { loading: "Deleting…", success: "Certificate deleted", error: "Failed to delete" }); };
+  const move = async (r: Row, dir: -1 | 1) => {
+    const sorted = [...rows].sort((a, b) => a.sort_order - b.sort_order);
+    const i = sorted.findIndex((x) => x.id === r.id);
+    const j = i + dir;
+    if (j < 0 || j >= sorted.length) return;
+    const a = sorted[i], b = sorted[j];
+    await Promise.all([
+      supabase!.from("certifications").update({ sort_order: b.sort_order }).eq("id", a.id),
+      supabase!.from("certifications").update({ sort_order: a.sort_order }).eq("id", b.id),
+    ]);
+    refresh();
+  };
   return (<>
     <DataTable<Row> title="Certificates" rows={rows}
-      columns={[{ key: "title", label: "Title", render: (r) => <b>{r.title}</b> }, { key: "issuer", label: "Issuer", render: (r) => r.issuer }, { key: "date", label: "Date", render: (r) => r.date_label }]}
+      columns={[
+        { key: "title", label: "Title", render: (r) => <b>{r.title}</b> },
+        { key: "issuer", label: "Issuer", render: (r) => r.issuer },
+        { key: "order", label: "Order", render: (r) => (
+            <span style={{ display: "inline-flex", gap: 4 }}>
+              <button className="btn btn-ghost" style={{ padding: "2px 8px" }} onClick={(e) => { e.stopPropagation(); move(r, -1); }}>↑</button>
+              <button className="btn btn-ghost" style={{ padding: "2px 8px" }} onClick={(e) => { e.stopPropagation(); move(r, 1); }}>↓</button>
+            </span>
+          ) },
+      ]}
       onNew={() => setDraft({ ...empty, sort_order: rows.length })} onEdit={(r) => setDraft(r)} onDelete={remove} />
     <FormDrawer open={!!draft} busy={busy} title={draft?.id ? "Edit certification" : "New certification"} onClose={() => setDraft(null)} onSave={save}>
       {draft && (<>
