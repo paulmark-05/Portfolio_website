@@ -7,10 +7,10 @@ import ImageLightbox from "../ui/ImageLightbox";
  *  on the left, two shorter ones stacked on the right, all matching the
  *  same total height. Its own section — Achievements is reserved for
  *  competition wins and other big-ticket recognitions, not these smaller
- *  work highlights. The lead card shows its photo full-width; the shorter
- *  cards show a small corner thumbnail instead so one long caption can't
- *  blow a tile's height out. Either way, a photo opens in the same
- *  full-screen lightbox the project previews use. */
+ *  work highlights. The lead card shows its photo full-width, with the
+ *  icon badged over the photo's bottom-left corner; cards with no header
+ *  photo show the icon beside the headline instead. Either way, a photo
+ *  opens in the same full-screen lightbox the project previews use. */
 export default function Highlights({ highlights }: { highlights: Highlight[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   if (!highlights.length) return null;
@@ -25,37 +25,38 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
         <div className="hl-grid reveal">
           {highlights.map((h, i) => {
             const isLead = i === 0;
+            const hasLeadImage = isLead && !!h.image;
             return (
               <article className={`hl-card${isLead ? " hl-lead" : ""}`} key={i}>
-                {isLead && h.image && (
-                  <button
-                    type="button"
-                    className="hl-card-image clickable"
-                    onClick={() => setOpenIdx(i)}
-                    aria-label={`View full photo for ${h.headline || "this highlight"}`}
-                  >
-                    <img src={h.image} alt="" loading="lazy" />
-                    <span className="hl-image-expand">View full ↗</span>
-                  </button>
+                {hasLeadImage && (
+                  <div className="hl-card-image-wrap">
+                    <button
+                      type="button"
+                      className="hl-card-image clickable"
+                      onClick={() => setOpenIdx(i)}
+                      aria-label={`View full photo for ${h.headline || "this highlight"}`}
+                    >
+                      <img src={h.image} alt="" loading="lazy" />
+                      <span className="hl-image-expand">View full ↗</span>
+                    </button>
+                    <span className="hl-icon hl-icon-onimage" aria-hidden="true">{h.icon || "🏅"}</span>
+                  </div>
                 )}
                 <div className="hl-card-body">
-                  <div className="hl-card-top">
-                    <div className="hl-kicker-row">
-                      <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>
-                      <span className="hl-kicker">Highlight</span>
-                    </div>
-                    {!isLead && h.image && (
-                      <button
-                        type="button"
-                        className="hl-thumb"
-                        onClick={() => setOpenIdx(i)}
-                        aria-label={`View full photo for ${h.headline || "this highlight"}`}
-                      >
-                        <img src={h.image} alt="" loading="lazy" />
-                      </button>
-                    )}
+                  {!isLead && h.image && (
+                    <button
+                      type="button"
+                      className="hl-thumb"
+                      onClick={() => setOpenIdx(i)}
+                      aria-label={`View full photo for ${h.headline || "this highlight"}`}
+                    >
+                      <img src={h.image} alt="" loading="lazy" />
+                    </button>
+                  )}
+                  <div className="hl-headline-row">
+                    {!hasLeadImage && <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>}
+                    {h.headline && <h3 className="hl-headline">{h.headline}</h3>}
                   </div>
-                  {h.headline && <h3 className="hl-headline">{h.headline}</h3>}
                   <p className="hl-text" dangerouslySetInnerHTML={{ __html: h.text }} />
                 </div>
               </article>
