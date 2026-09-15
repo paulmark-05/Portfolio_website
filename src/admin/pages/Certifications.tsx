@@ -5,6 +5,7 @@ import { DataTable } from "../components/DataTable";
 import { FormDrawer, Field, FieldBlock } from "../components/FormDrawer";
 import ImageUploader from "../components/ImageUploader";
 import RichTextEditor from "../components/RichTextEditor";
+import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 
 interface Row { id: string; title: string; issuer: string; date_label: string; description: string; image: string; sort_order: number; }
@@ -56,7 +57,15 @@ export default function CertificationsAdmin() {
         <Field label="Issuer"><input value={draft.issuer} onChange={(e) => setDraft({ ...draft, issuer: e.target.value })} /></Field>
         <Field label="Date label"><input value={draft.date_label} onChange={(e) => setDraft({ ...draft, date_label: e.target.value })} /></Field>
         <FieldBlock label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} /></FieldBlock>
-        <Field label="Certificate image"><ImageUploader value={draft.image} onChange={(path) => setDraft({ ...draft, image: path })} /></Field>
+        <Field label="Certificate image">
+          <ImageUploader value={draft.image} onChange={(path) => setDraft({ ...draft, image: path })} label="certificate" />
+          {draft.image && (
+            <div className="admin-cert-preview">
+              <img src={mediaUrl(draft.image)} alt="Certificate preview"
+                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+            </div>
+          )}
+        </Field>
       </>)}
     </FormDrawer>
   </>);
