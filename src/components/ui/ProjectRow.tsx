@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import type { Project } from "../../lib/types";
 import { resolveTech, techLogoUrl } from "../../lib/techRegistry";
 import { useSpotlight } from "../../hooks/useSpotlight";
+import ImageLightbox from "./ImageLightbox";
 
 const icArrow = (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M9 7h8v8" /></svg>
 );
 const icCode = (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
-);
-const icClose = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
 );
 const icPlay = (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
@@ -92,13 +89,8 @@ export default function ProjectRow({ p }: { p: Project }) {
         </div>
       </article>
 
-      {lightbox && hasImage && createPortal(
-        <div className="proj-lightbox open" role="dialog" aria-modal="true"
-             onClick={(e) => { if (e.target === e.currentTarget) setLightbox(false); }}>
-          <button className="proj-lightbox-close" aria-label="Close" onClick={() => setLightbox(false)}>{icClose}</button>
-          <img src={p.image} alt={p.title} />
-        </div>,
-        document.body
+      {lightbox && hasImage && (
+        <ImageLightbox src={p.image} alt={p.title} onClose={() => setLightbox(false)} />
       )}
     </>
   );

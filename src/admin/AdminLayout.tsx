@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 const NAV = [
   ["/admin", "Dashboard", true], ["/admin/sections", "Page sections"], ["/admin/profile", "Profile"],
+  ["/admin/highlights", "Highlights"],
   ["/admin/projects", "Projects"], ["/admin/experience", "Experience"],
   ["/admin/achievements", "Achievements"],
   ["/admin/skills", "Skills"], ["/admin/certifications", "Certificates"],

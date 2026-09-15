@@ -8,6 +8,7 @@ import ResetPassword from "./ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Sections from "./pages/Sections";
 import Profile from "./pages/Profile";
+import Highlights from "./pages/Highlights";
 import Projects from "./pages/Projects";
 import Experience from "./pages/Experience";
 import Achievements from "./pages/Achievements";
@@ -28,6 +29,7 @@ export default function AdminApp() {
             <Route index element={<Dashboard />} />
             <Route path="sections" element={<Sections />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="highlights" element={<Highlights />} />
             <Route path="projects" element={<Projects />} />
             <Route path="experience" element={<Experience />} />
             <Route path="achievements" element={<Achievements />} />

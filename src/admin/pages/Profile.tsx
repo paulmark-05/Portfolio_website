@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
-import { Field, FieldBlock } from "../components/FormDrawer";
+import { Field } from "../components/FormDrawer";
 import ImageUploader from "../components/ImageUploader";
 import RichTextEditor from "../components/RichTextEditor";
 import { SEED } from "../../lib/content";
@@ -9,8 +9,7 @@ import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 import Sidebar from "../../components/layout/Sidebar";
 import About from "../../components/sections/About";
-import Highlights from "../../components/sections/Highlights";
-import type { Profile, InfoCard, Highlight, Settings } from "../../lib/types";
+import type { Profile, InfoCard, Settings } from "../../lib/types";
 
 const EMPTY_SETTINGS: Settings = {
   email: "", linkedin: "", github: "", contactImage: "",
@@ -29,11 +28,6 @@ export default function ProfileAdmin() {
   useEffect(() => {
     supabase!.from("profiles").select("*").limit(1).maybeSingle().then(({ data }) => {
       if (data) {
-        // migrate the old single `commendation` string into the new
-        // `highlights` list the first time this row is opened in the admin.
-        if (!data.highlights && data.commendation) {
-          data.highlights = [{ icon: "🏅", text: data.commendation, image: "" }];
-        }
         setRow(data);
       } else {
         setRow({
@@ -42,7 +36,6 @@ export default function ProfileAdmin() {
           subtitle: SEED.profile.subtitle, resume_url: "",
           cta_primary: SEED.profile.ctaPrimary, roles: SEED.profile.roles,
           about_md: SEED.profile.aboutParagraphs.join("\n\n"),
-          highlights: SEED.profile.highlights,
           info_cards: SEED.profile.infoCards,
           hero_image: "",
         });
@@ -59,12 +52,12 @@ export default function ProfileAdmin() {
         name: row.name, title: row.title, availability_badge: row.availability_badge,
         subtitle: row.subtitle, resume_url: row.resume_url,
         cta_primary: row.cta_primary, roles: row.roles,
-        about_md: row.about_md, highlights: row.highlights,
+        about_md: row.about_md,
         info_cards: row.info_cards, hero_image: row.hero_image,
       };
       let { error } = await supabase!.from("profiles").update(full).eq("id", id);
-      if (error && /column .*(availability_badge|info_cards|highlights|roles)/i.test(error.message)) {
-        const { availability_badge, info_cards, highlights, roles, ...safe } = full;
+      if (error && /column .*(availability_badge|info_cards|roles)/i.test(error.message)) {
+        const { availability_badge, info_cards, roles, ...safe } = full;
         ({ error } = await supabase!.from("profiles").update(safe).eq("id", id));
       }
       if (error) throw error;
@@ -90,7 +83,7 @@ export default function ProfileAdmin() {
     ctaPrimary: { label: "", href: "" }, ctaGhost: { label: "", href: "" }, resumeUrl: row.resume_url || "",
     aboutParagraphs: (row.about_md || "").split("\n\n").filter(Boolean),
     aboutTitle: "", quickFacts: [], infoCards: row.info_cards || [],
-    highlights: (row.highlights ?? SEED.profile.highlights).map((h: Highlight) => ({ ...h, image: mediaUrl(h.image || "") })),
+    highlights: [],
     aboutImage: "", heroImage: mediaUrl(row.hero_image || ""), stackImage: "",
   };
 
@@ -164,47 +157,13 @@ export default function ProfileAdmin() {
           ))}
           <button className="btn btn-ghost" onClick={() => setParas([...paras, ""])}>+ Add paragraph</button>
         </div>
-
-        <h2 className="admin-section-h">Highlight cards</h2>
-        <p className="admin-hint">Shown in their own "Highlights" section further down the page — toggle or reorder it in Page Sections.</p>
-        <div className="highlight-list">
-          {(row.highlights || []).map((h: Highlight, i: number) => {
-            const items: Highlight[] = row.highlights || [];
-            const update = (patch: Partial<Highlight>) => { const next = [...items]; next[i] = { ...next[i], ...patch }; setRow({ ...row, highlights: next }); };
-            const move = (dir: -1 | 1) => { const j = i + dir; if (j < 0 || j >= items.length) return; const next = [...items]; [next[i], next[j]] = [next[j], next[i]]; setRow({ ...row, highlights: next }); };
-            const del = () => setRow({ ...row, highlights: items.filter((_, j) => j !== i) });
-            return (
-              <div className="highlight-row" key={i}>
-                <div className="highlight-row-head">
-                  <span className="admin-nav-tag">Highlight {i + 1}</span>
-                  <div className="rte-list-actions">
-                    <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(-1)}>↑</button>
-                    <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(1)}>↓</button>
-                    <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={del}>✕ Remove</button>
-                  </div>
-                </div>
-                <div className="highlight-row-top">
-                  <Field label="Icon"><input value={h.icon} placeholder="🏅" onChange={(e) => update({ icon: e.target.value })} /></Field>
-                  <Field label="Headline"><input value={h.headline} placeholder="Letter of Commendation" onChange={(e) => update({ headline: e.target.value })} /></Field>
-                </div>
-                <FieldBlock label="Details">
-                  <RichTextEditor value={h.text} onChange={(text) => update({ text })} rows={2} />
-                </FieldBlock>
-                <Field label="Photo (optional)">
-                  <ImageUploader value={h.image || ""} onChange={(image) => update({ image })} label="highlight photo" />
-                </Field>
-              </div>
-            );
-          })}
-          <button className="btn btn-ghost" onClick={() => setRow({ ...row, highlights: [...(row.highlights || []), { icon: "🏅", headline: "", text: "", image: "" }] })}>+ Add highlight</button>
-        </div>
       </div>
 
-      {/* LIVE PREVIEW DRAWER — renders Sidebar + About + Highlights from current form values */}
+      {/* LIVE PREVIEW DRAWER — renders Sidebar + About from current form values */}
       {preview && (
         <div className="preview-drawer" role="dialog" aria-modal="true">
           <div className="preview-head">
-            <span>Live preview — Sidebar, About &amp; Highlights (unsaved)</span>
+            <span>Live preview — Sidebar &amp; About (unsaved)</span>
             <div className="preview-actions">
               <button className="btn btn-primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button>
               <button className="btn btn-ghost" onClick={() => setPreview(false)}>Close ✕</button>
@@ -216,7 +175,6 @@ export default function ProfileAdmin() {
                 <Sidebar profile={previewProfile} settings={EMPTY_SETTINGS} open onToggle={() => {}} />
                 <div className="preview-layout-main">
                   <About profile={previewProfile} />
-                  <Highlights highlights={previewProfile.highlights} />
                 </div>
               </div>
             </div>
