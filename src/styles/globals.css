@@ -415,21 +415,30 @@ section{padding:56px 0;position:relative}
 .about-copy p:last-of-type{margin-bottom:0}
 .about-copy p b{color:var(--ink);font-weight:600}
 /* ============================================================ HIGHLIGHTS
-   True bento grid — same 4-col/lead-spans-2x2 pattern as Achievements, so
-   it auto-fits any number of highlights instead of being tuned for
-   exactly 3: the lead tile takes the top-left 2x2, every other highlight
-   is a plain 1x1 tile that wraps to a new row on its own as more get
-   added. Editorial touches (sharper corners, a hairline top rule instead
-   of a colored fill, sepia-toned photos) carry over from the print-
-   clippings look. Separate section from Achievements, which is reserved
-   for competition wins and other big-ticket recognitions — this is
-   smaller work moments. */
+   Bento grid — the lead tile is wider (2 cols) for prominence, but NOT
+   row-spanned: letting a multi-row lead force the grid to stretch its
+   row-mates to match left every shorter card with a huge dead gap below
+   its own text (grid-auto-rows had to make room for the lead's full
+   height somewhere, and it dumped most of that onto whichever row held
+   the other cards). align-items:start + auto rows means every card is
+   exactly as tall as its own content — proportional, no forced stretch —
+   and it still auto-fits any number of highlights, wrapping new ones
+   onto their own row. Editorial touches (sharper corners, a hairline top
+   rule instead of a colored fill, sepia-toned photos) carry over from
+   the print-clippings look. Separate section from Achievements, which is
+   reserved for competition wins and other big-ticket recognitions — this
+   is smaller work moments. */
 #highlights{padding-top:44px;padding-bottom:44px}
 #highlights .sec-head{margin-bottom:32px}
 .hl-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(140px,auto);gap:18px;
+  /* 3 columns, not 4 — a brief here carries a full paragraph and a photo
+     filmstrip (Achievements' cards, which this pattern is borrowed from,
+     are just a title + one line), so a 1/4-width tile wrapped that text
+     badly. 1/3 width gives it room. */
+  display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:18px;
+  align-items:start;
 }
-.hl-lead{grid-column:span 2;grid-row:span 2}
+.hl-lead{grid-column:span 2}
 .hl-card{
   position:relative;
   background:var(--card);
@@ -509,8 +518,8 @@ section{padding:56px 0;position:relative}
   .hl-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:760px){
-  .hl-grid{grid-template-columns:1fr;grid-auto-rows:auto}
-  .hl-lead{grid-column:span 1;grid-row:span 1}
+  .hl-grid{grid-template-columns:1fr}
+  .hl-lead{grid-column:span 1}
 }
 
 /* ============================================================ EXPERIENCE
