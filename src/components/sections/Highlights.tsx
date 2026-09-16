@@ -9,14 +9,13 @@ import ImageLightbox from "../ui/ImageLightbox";
  *  competition wins and other big-ticket recognitions, not these smaller
  *  work highlights.
  *
- *  Each highlight can carry up to 3 photos. The lead card shows the first
- *  full-width, with the icon badged over its bottom-left corner; any
- *  extra photos show as a small stacked cluster over the bottom-right
- *  corner. Cards with no header photo (every brief, and a photo-less
- *  lead) show up to 3 small stacked thumbnails instead, with the icon
- *  beside the headline. Clicking any photo — hero, stack, or thumbnail —
- *  opens the same full-screen gallery, starting on that photo, with
- *  prev/next to browse the rest. */
+ *  Any number of photos per highlight: the first is the card's main
+ *  photo, and if there are more, they show as a native-scroll filmstrip
+ *  underneath — swipe/drag through them, no arrow buttons needed on the
+ *  card itself. Clicking the main photo or any filmstrip thumbnail opens
+ *  the full-screen gallery lightbox on that exact photo, with prev/next
+ *  to browse the rest. Cards with no photo show the icon beside the
+ *  headline instead of over a photo corner. */
 export default function Highlights({ highlights }: { highlights: Highlight[] }) {
   const [gallery, setGallery] = useState<{ h: number; photo: number } | null>(null);
   if (!highlights.length) return null;
@@ -32,12 +31,11 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
           {highlights.map((h, i) => {
             const isLead = i === 0;
             const images = h.images ?? [];
-            const hasLeadImage = isLead && images.length > 0;
-            const stackImages = hasLeadImage ? images.slice(1, 3) : images.slice(0, 3);
+            const hasPhoto = images.length > 0;
 
             return (
               <article className={`hl-card${isLead ? " hl-lead" : ""}`} key={i}>
-                {hasLeadImage && (
+                {hasPhoto && (
                   <div className="hl-card-image-wrap">
                     <button
                       type="button"
@@ -49,41 +47,26 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
                       <span className="hl-image-expand">View full ↗</span>
                     </button>
                     <span className="hl-icon hl-icon-onimage" aria-hidden="true">{h.icon || "🏅"}</span>
-                    {stackImages.length > 0 && (
-                      <div className="hl-thumb-stack hl-thumb-stack-onimage">
-                        {stackImages.map((src, pi) => (
-                          <button
-                            type="button"
-                            className="hl-thumb"
-                            key={pi}
-                            onClick={() => setGallery({ h: i, photo: pi + 1 })}
-                            aria-label={`View photo ${pi + 2} for ${h.headline || "this highlight"}`}
-                          >
-                            <img src={src} alt="" loading="lazy" />
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                  </div>
+                )}
+                {images.length > 1 && (
+                  <div className="hl-filmstrip">
+                    {images.map((src, pi) => (
+                      <button
+                        type="button"
+                        className={`hl-filmstrip-thumb${pi === 0 ? " is-active" : ""}`}
+                        key={pi}
+                        onClick={() => setGallery({ h: i, photo: pi })}
+                        aria-label={`View photo ${pi + 1} of ${images.length} for ${h.headline || "this highlight"}`}
+                      >
+                        <img src={src} alt="" loading="lazy" />
+                      </button>
+                    ))}
                   </div>
                 )}
                 <div className="hl-card-body">
-                  {!hasLeadImage && stackImages.length > 0 && (
-                    <div className="hl-thumb-stack">
-                      {stackImages.map((src, pi) => (
-                        <button
-                          type="button"
-                          className="hl-thumb"
-                          key={pi}
-                          onClick={() => setGallery({ h: i, photo: pi })}
-                          aria-label={`View photo ${pi + 1} for ${h.headline || "this highlight"}`}
-                        >
-                          <img src={src} alt="" loading="lazy" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
                   <div className="hl-headline-row">
-                    {!hasLeadImage && <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>}
+                    {!hasPhoto && <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>}
                     {h.headline && <h3 className="hl-headline">{h.headline}</h3>}
                   </div>
                   <p className="hl-text" dangerouslySetInnerHTML={{ __html: h.text }} />

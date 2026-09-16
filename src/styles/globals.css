@@ -450,15 +450,34 @@ section{padding:56px 0;position:relative}
 }
 .hl-card-image.clickable:hover .hl-image-expand{opacity:1}
 /* icon badged over the photo's bottom-left corner, glassy so it reads
-   over any photo */
-.hl-lead .hl-icon-onimage{
+   over any photo — applies to any card with a photo, lead or brief */
+.hl-icon-onimage{
   position:absolute;left:12px;bottom:12px;z-index:2;
-  width:36px;height:36px;border-radius:10px;
+  width:32px;height:32px;border-radius:9px;
   background:color-mix(in srgb,var(--ink) 60%,transparent);
   backdrop-filter:blur(6px) saturate(1.4);-webkit-backdrop-filter:blur(6px) saturate(1.4);
   box-shadow:0 6px 16px -6px rgba(0,0,0,.45);
-  font-size:17px;
+  font-size:15px;
 }
+.hl-lead .hl-icon-onimage{width:36px;height:36px;border-radius:10px;font-size:17px}
+/* extra photos beyond the first as a native-scroll filmstrip — swipe or
+   drag through them, no arrow buttons needed here (the lightbox gallery
+   has its own arrows for browsing once you're zoomed in). */
+.hl-filmstrip{
+  display:flex;gap:8px;padding:10px 14px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
+  scrollbar-width:none;background:var(--paper-2);border-bottom:1px solid var(--line);
+}
+.hl-filmstrip::-webkit-scrollbar{display:none}
+.hl-filmstrip-thumb{
+  all:unset;flex:0 0 auto;width:46px;height:46px;border-radius:8px;overflow:hidden;box-sizing:border-box;
+  border:2px solid transparent;display:block;cursor:zoom-in;scroll-snap-align:start;
+  transition:border-color .2s,transform .2s var(--ease);
+}
+.hl-filmstrip-thumb.is-active{border-color:var(--accent)}
+.hl-filmstrip-thumb:hover{transform:translateY(-2px)}
+.hl-filmstrip-thumb img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.12) saturate(1.05)}
+.hl-lead .hl-filmstrip-thumb{width:56px;height:56px}
 .hl-card-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;min-height:0}
 .hl-lead .hl-card-body{padding:24px 26px 26px}
 /* the two briefs run the lead's full height (see .hl-grid above) —
@@ -472,29 +491,6 @@ section{padding:56px 0;position:relative}
   font-size:13px;line-height:1;
 }
 .hl-lead .hl-icon{width:32px;height:32px;font-size:15px}
-/* a card's extra photos as a small fanned stack — up to 3 clickable
-   thumbnails, each opening the gallery lightbox on that photo. The
-   card-colored ring around each one is what makes overlapping thumbnails
-   read as separate stacked photos rather than one blob. */
-.hl-thumb-stack{display:flex}
-.hl-thumb-stack:not(.hl-thumb-stack-onimage){align-self:flex-end;margin-bottom:10px}
-.hl-thumb-stack .hl-thumb:not(:first-child){margin-left:-10px}
-.hl-thumb{
-  all:unset;width:32px;height:32px;border-radius:7px;overflow:hidden;box-sizing:border-box;
-  border:2px solid var(--card);display:block;cursor:zoom-in;position:relative;
-  transition:transform .2s var(--ease),border-color .2s;
-}
-.hl-thumb:hover{transform:translateY(-3px);z-index:2;border-color:var(--accent)}
-.hl-thumb img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.12) saturate(1.05)}
-/* the lead's extra photos overlay its hero photo's bottom-right corner —
-   mirrors the icon badge on the bottom-left — so the ring reads against
-   a photo instead of the card background */
-.hl-thumb-stack-onimage{position:absolute;right:12px;bottom:12px;z-index:2}
-.hl-thumb-stack-onimage .hl-thumb{
-  width:34px;height:34px;border-color:rgba(255,255,255,.85);
-  box-shadow:0 6px 14px -6px rgba(0,0,0,.5);
-}
-.hl-thumb-stack-onimage .hl-thumb:hover{border-color:#fff}
 .hl-headline-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .hl-lead .hl-headline-row{margin-bottom:11px}
 .hl-headline{font-family:var(--serif);font-size:16.5px;font-weight:600;color:var(--ink);line-height:1.28;letter-spacing:-.01em}

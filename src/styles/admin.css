@@ -201,6 +201,11 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
   .admin-stats{grid-template-columns:repeat(2,1fr)}
   .admin-main{padding:70px 18px 24px}
   .admin-nav-toggle{left:18px}
+  /* .admin-toolbar is position:sticky;top:0 — once the page scrolls it
+     rises to the very top of the screen, where its title sat at the same
+     18px left offset as the fixed burger button and ran straight under
+     it. Room on the left keeps them apart at every scroll position. */
+  .admin-toolbar{padding-left:54px}
 }
 @media(max-width:760px){
   .admin-main{padding:20px 14px}

@@ -10,8 +10,6 @@ import { useToast } from "../../context/ToastContext";
 import HighlightsSection from "../../components/sections/Highlights";
 import type { Highlight } from "../../lib/types";
 
-const MAX_PHOTOS = 3;
-
 /** Migrates an older row's single `image` string into the `images` array,
  *  so highlights saved before multi-photo support still load correctly. */
 function normalize(raw: any): Highlight {
@@ -80,10 +78,7 @@ export default function HighlightsAdmin() {
   const removePhoto = (i: number, pi: number) => {
     update(i, { images: items[i].images.filter((_, j) => j !== pi) });
   };
-  const addPhoto = (i: number) => {
-    if (items[i].images.length >= MAX_PHOTOS) return;
-    update(i, { images: [...items[i].images, ""] });
-  };
+  const addPhoto = (i: number) => update(i, { images: [...items[i].images, ""] });
 
   const previewHighlights = items.map((h) => ({ ...h, images: h.images.map((p) => mediaUrl(p || "")) }));
 
@@ -119,7 +114,7 @@ export default function HighlightsAdmin() {
               <FieldBlock label="Details">
                 <RichTextEditor value={h.text} onChange={(text) => update(i, { text })} rows={2} />
               </FieldBlock>
-              <Field label={`Photos (optional, up to ${MAX_PHOTOS})`}>
+              <Field label="Photos (optional)">
                 <div className="hl-photos-editor">
                   {h.images.map((img, pi) => (
                     <div className="hl-photo-slot" key={pi}>
@@ -127,9 +122,7 @@ export default function HighlightsAdmin() {
                       <button type="button" className="btn btn-ghost danger" onClick={() => removePhoto(i, pi)}>✕ Remove photo</button>
                     </div>
                   ))}
-                  {h.images.length < MAX_PHOTOS && (
-                    <button type="button" className="btn btn-ghost" onClick={() => addPhoto(i)}>+ Add photo</button>
-                  )}
+                  <button type="button" className="btn btn-ghost" onClick={() => addPhoto(i)}>+ Add photo</button>
                 </div>
               </Field>
             </div>
