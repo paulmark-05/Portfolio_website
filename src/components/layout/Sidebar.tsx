@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { initialsOf } from "../../lib/format";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import type { Profile, Settings } from "../../lib/types";
+import ImageLightbox from "../ui/ImageLightbox";
 
 const icLinkedIn = (
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 1 1-4-.02 2 2 0 0 1 4 .02M7 8.48H3V21h4zM20.34 21h4v-7.07c0-3.87-2.06-5.67-4.81-5.67a4.19 4.19 0 0 0-3.76 2h-.06V8.48h-4v12.5h4v-6.19c0-1.63.31-3.21 2.33-3.21s2.29 1.86 2.29 3.31z" /></svg>
@@ -41,6 +42,7 @@ function RoleScroll({ roles }: { roles: string[] }) {
  *  the handle stays put at the sidebar's edge even while it's collapsed. */
 export default function Sidebar({ profile, settings, open, onToggle }: { profile: Profile; settings: Settings; open: boolean; onToggle: () => void }) {
   const [imgFailed, setImgFailed] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
   const hasPhoto = !!profile.heroImage && !imgFailed;
 
   const cleanRoles = (profile.roles || []).filter(Boolean);
@@ -65,13 +67,21 @@ export default function Sidebar({ profile, settings, open, onToggle }: { profile
         {icChevron}
       </button>
       <div className="sidebar-content" inert={collapsed ? "" : undefined}>
-      <div className="sidebar-photo">
-        {hasPhoto ? (
+      {hasPhoto ? (
+        <button
+          type="button"
+          className="sidebar-photo clickable"
+          onClick={() => setLightbox(true)}
+          aria-label={`View full photo of ${profile.name}`}
+        >
           <img src={profile.heroImage} alt={profile.name} onError={() => setImgFailed(true)} />
-        ) : (
+          <span className="sidebar-photo-expand">View full ↗</span>
+        </button>
+      ) : (
+        <div className="sidebar-photo">
           <span className="sidebar-photo-mono">{initialsOf(profile.name)}</span>
-        )}
-      </div>
+        </div>
+      )}
 
       <h1 className="sidebar-name">Hello, I&rsquo;m <em>{profile.name}</em></h1>
       <RoleScroll roles={roles} />
@@ -95,6 +105,10 @@ export default function Sidebar({ profile, settings, open, onToggle }: { profile
         {mapsHref && <a href={mapsHref} target="_blank" rel="noopener" aria-label={`Location: ${locationFact!.text}`} title={locationFact!.text}>{icPin}</a>}
       </div>
       </div>
+
+      {lightbox && hasPhoto && (
+        <ImageLightbox src={profile.heroImage} alt={profile.name} onClose={() => setLightbox(false)} />
+      )}
     </aside>
   );
 }
