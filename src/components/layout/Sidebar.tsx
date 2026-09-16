@@ -107,7 +107,7 @@ export default function Sidebar({ profile, settings, open, onToggle }: { profile
       </div>
 
       {lightbox && hasPhoto && (
-        <ImageLightbox src={profile.heroImage} alt={profile.name} onClose={() => setLightbox(false)} />
+        <ImageLightbox src={profile.heroImage} alt={profile.name} caption={`Hi, I'm ${profile.name} 👋`} onClose={() => setLightbox(false)} />
       )}
     </aside>
   );

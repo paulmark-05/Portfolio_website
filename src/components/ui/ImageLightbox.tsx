@@ -16,15 +16,18 @@ const icChevron = (
  *
  *  Pass either a single `src`, or a gallery via `images` + `index` +
  *  `onIndexChange` — prev/next arrows (and left/right arrow keys) only
- *  show up once there's more than one photo to browse. */
+ *  show up once there's more than one photo to browse. An optional
+ *  `caption` shows underneath the photo (e.g. a warm greeting on the
+ *  profile photo) — plain single-image callers just leave it out. */
 export default function ImageLightbox({
-  src, images, index = 0, onIndexChange, alt, onClose,
+  src, images, index = 0, onIndexChange, alt, caption, onClose,
 }: {
   src?: string;
   images?: string[];
   index?: number;
   onIndexChange?: (i: number) => void;
   alt: string;
+  caption?: string;
   onClose: () => void;
 }) {
   const list = images ?? (src ? [src] : []);
@@ -37,7 +40,7 @@ export default function ImageLightbox({
   };
 
   return createPortal(
-    <div className="lightbox open" role="dialog" aria-modal="true"
+    <div className={`lightbox open${caption ? " has-caption" : ""}`} role="dialog" aria-modal="true"
          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
          onKeyDown={(e) => {
            if (e.key === "Escape") onClose();
@@ -56,6 +59,7 @@ export default function ImageLightbox({
         </>
       )}
       <img src={current} alt={alt} />
+      {caption && <p className="lightbox-caption">{caption}</p>}
     </div>,
     document.body
   );
