@@ -3,11 +3,12 @@ import type { Highlight } from "../../lib/types";
 import SectionTag from "../ui/SectionTag";
 import ImageLightbox from "../ui/ImageLightbox";
 
-/** Highlights of my work — an editorial-clippings layout: one lead story
- *  on the left, two shorter ones stacked on the right, all matching the
- *  same total height. Its own section — Achievements is reserved for
- *  competition wins and other big-ticket recognitions, not these smaller
- *  work highlights.
+/** Highlights of my work — a bento grid (same lead-spans-2x2 pattern as
+ *  Achievements), so it auto-fits cleanly whether there's 1 highlight or
+ *  a dozen: the first is the lead tile, every other one is a plain 1x1
+ *  tile that wraps to a new row on its own as more get added. Its own
+ *  section — Achievements is reserved for competition wins and other
+ *  big-ticket recognitions, not these smaller work highlights.
  *
  *  Any number of photos per highlight: the first is the card's main
  *  photo, and if there are more, they show as a native-scroll filmstrip
