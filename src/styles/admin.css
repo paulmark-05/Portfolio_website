@@ -149,6 +149,9 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .highlight-row{border:1px solid var(--line);border-radius:12px;padding:14px 16px 2px;background:var(--card)}
 .highlight-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .highlight-row-top{display:grid;grid-template-columns:90px 1fr;gap:14px}
+/* up to 3 photos per highlight — one uploader + remove button per slot */
+.hl-photos-editor{display:flex;flex-direction:column;gap:10px}
+.hl-photo-slot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
 /* repeatable list of rich-text blocks (e.g. About paragraphs) */
 .rte-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}

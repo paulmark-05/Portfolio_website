@@ -2,7 +2,7 @@ export interface CTA { label: string; href: string }
 export interface QuickFact { label: string; value: string }
 
 export interface InfoCard { icon: string; text: string; visible: boolean }
-export interface Highlight { icon: string; headline: string; text: string; image: string }   // text is HTML-allowed
+export interface Highlight { icon: string; headline: string; text: string; images: string[] }   // text is HTML-allowed; up to 3 photos
 
 export interface Profile {
   name: string;

@@ -68,15 +68,20 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           // migrate the old single `commendation` string into the new
           // multi-highlight list on read, so existing content still shows
           // up even before the `highlights` column/data exists. Each
-          // highlight's image is its own storage path, resolved the same
-          // way as every other image field.
+          // highlight can hold up to 3 photos now — older rows saved with
+          // a single `image` string are migrated into a one-item array.
+          // Every path is resolved through mediaUrl the same as any other
+          // image field.
           highlights: (
             profileR.data.highlights ?? (
               profileR.data.commendation
-                ? [{ icon: "🏅", headline: "", text: profileR.data.commendation, image: "" }]
+                ? [{ icon: "🏅", headline: "", text: profileR.data.commendation, images: [] }]
                 : SEED.profile.highlights
             )
-          ).map((h: any) => ({ icon: h.icon ?? "", headline: h.headline ?? "", text: h.text ?? "", image: mediaUrl(h.image ?? "") })),
+          ).map((h: any) => ({
+            icon: h.icon ?? "", headline: h.headline ?? "", text: h.text ?? "",
+            images: (h.images ?? (h.image ? [h.image] : [])).map((p: string) => mediaUrl(p)).filter(Boolean),
+          })),
           aboutImage: mediaUrl(profileR.data.about_image ?? SEED.profile.aboutImage),
           heroImage: mediaUrl(profileR.data.hero_image ?? SEED.profile.heroImage),
           stackImage: mediaUrl(profileR.data.stack_image ?? SEED.profile.stackImage),

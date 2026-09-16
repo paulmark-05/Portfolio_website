@@ -10,6 +10,17 @@ import { useToast } from "../../context/ToastContext";
 import HighlightsSection from "../../components/sections/Highlights";
 import type { Highlight } from "../../lib/types";
 
+const MAX_PHOTOS = 3;
+
+/** Migrates an older row's single `image` string into the `images` array,
+ *  so highlights saved before multi-photo support still load correctly. */
+function normalize(raw: any): Highlight {
+  return {
+    icon: raw.icon ?? "", headline: raw.headline ?? "", text: raw.text ?? "",
+    images: raw.images ?? (raw.image ? [raw.image] : []),
+  };
+}
+
 /** Own admin page for the "Highlights" section — split out of Profile so
  *  it's not buried under sidebar/about editing. Still just a `highlights`
  *  column on the single `profiles` row, updated in isolation so this page
@@ -26,12 +37,9 @@ export default function HighlightsAdmin() {
     supabase!.from("profiles").select("id,highlights,commendation").limit(1).maybeSingle().then(({ data }) => {
       if (data) {
         setProfileId(data.id);
-        // migrate the old single `commendation` string on first open, same
-        // fallback Profile's editor used to do before this page existed.
-        setItems(
-          data.highlights ??
-          (data.commendation ? [{ icon: "🏅", headline: "", text: data.commendation, image: "" }] : SEED.profile.highlights)
-        );
+        const raw: any[] = data.highlights ??
+          (data.commendation ? [{ icon: "🏅", headline: "", text: data.commendation, images: [] }] : SEED.profile.highlights);
+        setItems(raw.map(normalize));
       } else {
         setItems(SEED.profile.highlights);
       }
@@ -66,7 +74,18 @@ export default function HighlightsAdmin() {
   };
   const del = (i: number) => setItems(items.filter((_, j) => j !== i));
 
-  const previewHighlights = items.map((h) => ({ ...h, image: mediaUrl(h.image || "") }));
+  const updatePhoto = (i: number, pi: number, path: string) => {
+    const photos = [...items[i].images]; photos[pi] = path; update(i, { images: photos });
+  };
+  const removePhoto = (i: number, pi: number) => {
+    update(i, { images: items[i].images.filter((_, j) => j !== pi) });
+  };
+  const addPhoto = (i: number) => {
+    if (items[i].images.length >= MAX_PHOTOS) return;
+    update(i, { images: [...items[i].images, ""] });
+  };
+
+  const previewHighlights = items.map((h) => ({ ...h, images: h.images.map((p) => mediaUrl(p || "")) }));
 
   return (
     <div>
@@ -100,12 +119,22 @@ export default function HighlightsAdmin() {
               <FieldBlock label="Details">
                 <RichTextEditor value={h.text} onChange={(text) => update(i, { text })} rows={2} />
               </FieldBlock>
-              <Field label="Photo (optional)">
-                <ImageUploader value={h.image || ""} onChange={(image) => update(i, { image })} label="highlight photo" />
+              <Field label={`Photos (optional, up to ${MAX_PHOTOS})`}>
+                <div className="hl-photos-editor">
+                  {h.images.map((img, pi) => (
+                    <div className="hl-photo-slot" key={pi}>
+                      <ImageUploader value={img} onChange={(path) => updatePhoto(i, pi, path)} label={`photo ${pi + 1}`} />
+                      <button type="button" className="btn btn-ghost danger" onClick={() => removePhoto(i, pi)}>✕ Remove photo</button>
+                    </div>
+                  ))}
+                  {h.images.length < MAX_PHOTOS && (
+                    <button type="button" className="btn btn-ghost" onClick={() => addPhoto(i)}>+ Add photo</button>
+                  )}
+                </div>
               </Field>
             </div>
           ))}
-          <button className="btn btn-ghost" onClick={() => setItems([...items, { icon: "🏅", headline: "", text: "", image: "" }])}>+ Add highlight</button>
+          <button className="btn btn-ghost" onClick={() => setItems([...items, { icon: "🏅", headline: "", text: "", images: [] }])}>+ Add highlight</button>
         </div>
       </div>
 
