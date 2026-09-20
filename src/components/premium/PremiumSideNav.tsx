@@ -149,15 +149,14 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
         </div>
       </nav>
 
-      {/* Mobile / tablet — a persistent top bar standing in for the
-          sidebar: name, tagline and the same four icon links stay visible
-          at all times (not just inside the opened drawer), since there's
-          no separate hero section to show them on mobile either. */}
+      {/* Mobile / tablet — a compact, persistent top bar: brand pill +
+          burger on the first row, the same four icon links on the second.
+          The actual name/tagline intro lives as real page content just
+          above About (see Home.tsx) instead of living in this bar. */}
       <header className="fixed inset-x-0 top-0 z-50 flex flex-col gap-3 border-b border-edge/10 bg-void/60 px-5 pb-3.5 pt-4 backdrop-blur-xl lg:hidden">
         <div className="flex items-center justify-between gap-3">
-          <a href="#about" onClick={go("about")} className="min-w-0">
-            <div className="truncate font-display text-lg leading-tight text-bone">{profile.name}</div>
-            {profile.title && <div className="mt-0.5 truncate font-mono text-[11px] text-mist">{profile.title}</div>}
+          <a href="#about" onClick={go("about")} className="rounded-full border border-edge/12 bg-surface/30 px-3.5 py-1.5 font-mono text-sm tracking-tight text-bone backdrop-blur-xl">
+            {profile.name.split(" ")[0]?.toLowerCase()}<span className="text-mist">.{profile.name.split(" ").slice(1).join("").toLowerCase() || "dev"}</span>
           </a>
           <button
             aria-label={open ? "Close menu" : "Open menu"}
@@ -203,23 +202,6 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
                   </motion.a>
                 ))}
               </div>
-              {iconLinks.length > 0 && (
-                <div className="mt-4 flex items-center gap-3">
-                  {iconLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      target={l.mail ? undefined : "_blank"}
-                      rel={l.mail ? undefined : "noopener"}
-                      aria-label={l.label}
-                      onClick={() => setOpen(false)}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-edge/20 bg-surface/30 text-bone backdrop-blur-xl"
-                    >
-                      <span className="flex h-4 w-4 items-center justify-center">{l.icon}</span>
-                    </a>
-                  ))}
-                </div>
-              )}
             </div>
           </motion.div>
         )}
