@@ -1,5 +1,6 @@
 import SectionLabel from "./SectionLabel";
 import { Reveal } from "./Reveal";
+import { icFile } from "./navIcons";
 import type { Settings } from "../../lib/types";
 
 export default function ContactSection({ settings, resumeUrl, index }: { settings: Settings; resumeUrl?: string; index: string }) {
@@ -33,7 +34,8 @@ export default function ContactSection({ settings, resumeUrl, index }: { setting
           </a>
         )}
         {resumeUrl && (
-          <a href={resumeUrl} target="_blank" rel="noopener" className="pr-btn-hover rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
+          <a href={resumeUrl} target="_blank" rel="noopener" className="pr-btn-hover flex items-center gap-2 rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
+            <span className="flex h-[14px] w-[14px] shrink-0 items-center justify-center">{icFile}</span>
             Résumé ↓
           </a>
         )}

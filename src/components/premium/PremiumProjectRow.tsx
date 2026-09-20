@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import type { Project } from "../../lib/types";
 import { resolveTech } from "../../lib/techRegistry";
 import TechBubble from "./TechBubble";
-import ImageLightbox from "../ui/ImageLightbox";
+import CollageThumb from "./CollageThumb";
+import MediaGallery from "../ui/MediaGallery";
 
 const icArrow = <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M9 7h8v8" /></svg>;
 const icCode = <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>;
@@ -12,7 +13,8 @@ const icPlay = <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColo
 export default function PremiumProjectRow({ p, index = 0 }: { p: Project; index?: number }) {
   const [imgFailed, setImgFailed] = useState(false);
   const [lightbox, setLightbox] = useState(false);
-  const hasImage = !!p.image && !imgFailed;
+  const images = (p.images?.length ? p.images : p.image ? [p.image] : []).filter(Boolean);
+  const hasImage = images.length > 0 && !imgFailed;
   const primaryTech = p.techStack.length ? resolveTech(p.techStack[0]) : null;
   const monogram = (p.title || "?").trim().charAt(0).toUpperCase();
 
@@ -29,11 +31,11 @@ export default function PremiumProjectRow({ p, index = 0 }: { p: Project; index?
         <button
           type="button"
           onClick={hasImage ? () => setLightbox(true) : undefined}
-          aria-label={hasImage ? `View full preview of ${p.title}` : undefined}
+          aria-label={hasImage ? `View ${images.length > 1 ? `${images.length} photos` : "full preview"} of ${p.title}` : undefined}
           className={`relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-edge/12 bg-surface/30 backdrop-blur-xl ${hasImage ? "cursor-pointer" : "cursor-default"}`}
         >
           {hasImage ? (
-            <img src={p.image} alt="" loading="lazy" onError={() => setImgFailed(true)} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <CollageThumb images={images} onFirstError={() => setImgFailed(true)} />
           ) : (
             <div className="flex h-full w-full items-center justify-center" style={{ background: primaryTech ? `linear-gradient(135deg, ${primaryTech.color}22, transparent)` : undefined }}>
               <span className="font-display text-4xl text-bone/20">{monogram}</span>
@@ -64,7 +66,7 @@ export default function PremiumProjectRow({ p, index = 0 }: { p: Project; index?
         </div>
       </motion.article>
 
-      {lightbox && hasImage && <ImageLightbox src={p.image} alt={p.title} onClose={() => setLightbox(false)} />}
+      {lightbox && hasImage && <MediaGallery images={images} alt={p.title} onClose={() => setLightbox(false)} />}
     </>
   );
 }

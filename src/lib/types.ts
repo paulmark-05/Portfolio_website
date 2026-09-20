@@ -36,7 +36,8 @@ export interface Project {
   githubUrl: string;
   liveUrl: string;
   demoUrl: string;              // walkthrough video showing the features in action
-  image: string;
+  image: string;                // legacy single cover — superseded by images[], kept as its [0] fallback
+  images: string[];             // preview photos; collage thumbnail + gallery when there's more than one
   sortOrder: number;
 }
 

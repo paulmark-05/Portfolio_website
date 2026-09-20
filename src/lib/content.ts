@@ -119,7 +119,7 @@ export const SEED: SiteContent = {
         'Audited two production web apps for <span class="m">WCAG 2.1 AA</span> compliance with axe-core, identifying 4 violation types across 18 elements. Manually cross-checked automated findings with VoiceOver and NVDA to separate confirmed violations from flags needing human judgment.',
       techStack: ["axe-core", "WCAG 2.1", "VoiceOver", "NVDA"],
       githubUrl: "", liveUrl: "", demoUrl: "",
-      image: "", sortOrder: 0,
+      image: "", images: [], sortOrder: 0,
     },
     {
       id: "p2", slug: "unity-run-2026", title: "Unity Run 2026: Event Registration Platform",
@@ -128,7 +128,7 @@ export const SEED: SiteContent = {
         'Full-stack registration site for a government-run sports event: multi-step flow, payment capture, and slot-cap enforcement, live in production. Real-time seat counters via Socket.IO with <span class="m">no polling</span>, email OTP verification, and a QR-first fallback after diagnosing a bank-side UPI deep-link restriction.',
       techStack: ["Node.js", "Express", "Google Sheets API", "Socket.io"],
       githubUrl: "", liveUrl: "", demoUrl: "",
-      image: "", sortOrder: 1,
+      image: "", images: [], sortOrder: 1,
     },
     {
       id: "p3", slug: "medbot", title: "MedBot: Agentic AI Healthcare Assistant",
@@ -138,7 +138,7 @@ export const SEED: SiteContent = {
       techStack: ["Python", "LangGraph", "ChromaDB", "Streamlit", "Groq", "RAGAS"],
       githubUrl: "https://github.com/nayanipaul/medbot",
       liveUrl: "https://medbot-demo.streamlit.app", demoUrl: "",
-      image: "/images/medbot.png", sortOrder: 2,
+      image: "/images/medbot.png", images: ["/images/medbot.png"], sortOrder: 2,
     },
     {
       id: "p4", slug: "vision-assist", title: "Vision Assistance for the Visually Impaired",
@@ -148,7 +148,7 @@ export const SEED: SiteContent = {
       techStack: ["Python", "YOLOv8", "OpenCV", "pyttsx3", "IP Webcam"],
       githubUrl: "https://github.com/nayanipaul/vision-assist",
       liveUrl: "", demoUrl: "https://github.com/nayanipaul/vision-assist#demo",
-      image: "/images/vision-assist.png", sortOrder: 3,
+      image: "/images/vision-assist.png", images: ["/images/vision-assist.png"], sortOrder: 3,
     },
     {
       id: "p5", slug: "nutricoach", title: "NutriCoach: AI Diet Agent",
@@ -158,7 +158,7 @@ export const SEED: SiteContent = {
       techStack: ["React", "Supabase", "Gemini API", "Nano Banana"],
       githubUrl: "https://github.com/nayanipaul/nutricoach",
       liveUrl: "https://nutricoach-demo.vercel.app", demoUrl: "",
-      image: "/images/nutricoach.png", sortOrder: 4,
+      image: "/images/nutricoach.png", images: ["/images/nutricoach.png"], sortOrder: 4,
     },
     {
       id: "p6", slug: "datavizard", title: "DataVizard: AI Analytics Dashboard",
@@ -168,7 +168,7 @@ export const SEED: SiteContent = {
       techStack: ["Flask", "Vanilla JS", "Gemini API", "Pandas"],
       githubUrl: "https://github.com/nayanipaul/datavizard",
       liveUrl: "https://datavizard-demo.onrender.com", demoUrl: "",
-      image: "/images/datavizard.png", sortOrder: 5,
+      image: "/images/datavizard.png", images: ["/images/datavizard.png"], sortOrder: 5,
     },
   ],
   achievements: [

@@ -12,11 +12,11 @@ import { useToast } from "../../context/ToastContext";
 interface Row {
   id: string; slug: string; title: string; description: string; date_label: string;
   featured: boolean; active: boolean; tech_stack: string[]; github_url: string; live_url: string;
-  demo_url: string; image: string; sort_order: number; date_value: string;
+  demo_url: string; image: string; images: string[]; sort_order: number; date_value: string;
 }
 const empty: Row = {
   id: "", slug: "", title: "", description: "", date_label: "", featured: false, active: false,
-  tech_stack: [], github_url: "", live_url: "", demo_url: "", image: "", sort_order: 0,
+  tech_stack: [], github_url: "", live_url: "", demo_url: "", image: "", images: [], sort_order: 0,
   date_value: "",
 };
 
@@ -36,6 +36,9 @@ export default function ProjectsAdmin() {
         // Hydrate the picker for existing rows: prefer stored date_value,
         // otherwise parse it back out of the human date_label.
         if (!row.date_value) row.date_value = parseToValue(row.date_label);
+        // Rows saved before multi-photo support only have the single
+        // `image` column — fall back to that as the first (only) photo.
+        if (!row.images?.length && row.image) row.images = [row.image];
         return row;
       }) as Row[];
       // Listed newest-first here for easier browsing — this is just the
@@ -62,6 +65,9 @@ export default function ProjectsAdmin() {
         ...draft,
         slug: draft.slug || slugify(draft.title) || `project-${Date.now()}`,
         date_label,
+        // Legacy single-image column stays in sync as the cover/first
+        // photo, so anything still reading `image` alone keeps working.
+        image: draft.images[0] || "",
       };
       if (!full.id) delete full.id;
 
@@ -71,8 +77,15 @@ export default function ProjectsAdmin() {
           : supabase!.from("projects").insert(payload);
 
       let { error } = await exec(full);
-      if (error && /column .*(date_value|active|demo_url)/i.test(error.message)) {
-        const { date_value, active, demo_url, ...safe } = full;
+      // PostgREST reports a stale schema cache as "Could not find the 'X'
+      // column of 'projects' in the schema cache" — strip whichever column
+      // it names and retry, so one not-yet-cached column doesn't block
+      // saving everything else.
+      const safe: any = { ...full };
+      while (error) {
+        const missing = error.message.match(/Could not find the '(\w+)' column/i)?.[1];
+        if (!missing || !(missing in safe)) break;
+        delete safe[missing];
         ({ error } = await exec(safe));
       }
       if (error) throw error;
@@ -139,8 +152,20 @@ export default function ProjectsAdmin() {
                 </label>
               </Field>
             </div>
-            <Field label="Preview image">
-              <ImageUploader value={draft.image} onChange={(path) => setDraft({ ...draft, image: path })} label="preview image" />
+            <Field label="Preview photos — more than one shows as a collage thumbnail with a click-through gallery">
+              <div className="hl-photos-editor">
+                {draft.images.map((img, pi) => (
+                  <div className="hl-photo-slot" key={pi}>
+                    <ImageUploader
+                      value={img}
+                      onChange={(path) => { const next = [...draft.images]; next[pi] = path; setDraft({ ...draft, images: next }); }}
+                      label={`photo ${pi + 1}`}
+                    />
+                    <button type="button" className="btn btn-ghost danger" onClick={() => setDraft({ ...draft, images: draft.images.filter((_, j) => j !== pi) })}>✕ Remove photo</button>
+                  </div>
+                ))}
+                <button type="button" className="btn btn-ghost" onClick={() => setDraft({ ...draft, images: [...draft.images, ""] })}>+ Add photo</button>
+              </div>
             </Field>
           </>
         )}

@@ -95,7 +95,9 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           dateLabel: r.date_label ?? "", featured: !!r.featured, active: !!r.active,
           techStack: r.tech_stack ?? [], githubUrl: r.github_url ?? "",
           liveUrl: r.live_url ?? "", demoUrl: r.demo_url ?? "",
-          image: mediaUrl(r.image ?? ""), sortOrder: r.sort_order ?? 0,
+          image: mediaUrl(r.image ?? ""),
+          images: (r.images?.length ? r.images : r.image ? [r.image] : []).map((p: string) => mediaUrl(p)).filter(Boolean),
+          sortOrder: r.sort_order ?? 0,
         }))
       : SEED.projects;
 

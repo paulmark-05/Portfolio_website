@@ -1,13 +1,14 @@
 import { useState } from "react";
 import SectionLabel from "./SectionLabel";
 import { Reveal } from "./Reveal";
-import ImageLightbox from "../ui/ImageLightbox";
+import CollageThumb from "./CollageThumb";
+import MediaGallery from "../ui/MediaGallery";
 import type { Highlight } from "../../lib/types";
 
 export default function HighlightsSection({ highlights, index }: { highlights: Highlight[]; index: string }) {
-  const [gallery, setGallery] = useState<{ h: number; photo: number } | null>(null);
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
   if (!highlights.length) return null;
-  const open = gallery ? highlights[gallery.h] : null;
+  const open = openIdx !== null ? highlights[openIdx] : null;
 
   return (
     <section id="highlights" className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24">
@@ -30,11 +31,11 @@ export default function HighlightsSection({ highlights, index }: { highlights: H
               {hasPhoto && (
                 <button
                   type="button"
-                  onClick={() => setGallery({ h: i, photo: 0 })}
+                  onClick={() => setOpenIdx(i)}
                   className="aspect-[16/9] w-full shrink-0 overflow-hidden rounded-lg border border-edge/10 sm:aspect-[4/3]"
-                  aria-label={`View full photo for ${h.headline || "this highlight"}`}
+                  aria-label={`View ${images.length > 1 ? `${images.length} photos` : "photo"} for ${h.headline || "this highlight"}`}
                 >
-                  <img src={images[0]} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <CollageThumb images={images} />
                 </button>
               )}
               <div>
@@ -47,12 +48,10 @@ export default function HighlightsSection({ highlights, index }: { highlights: H
       </div>
 
       {open && (
-        <ImageLightbox
+        <MediaGallery
           images={open.images}
-          index={gallery!.photo}
-          onIndexChange={(photo) => setGallery({ h: gallery!.h, photo })}
           alt={open.headline || "Highlight photo"}
-          onClose={() => setGallery(null)}
+          onClose={() => setOpenIdx(null)}
         />
       )}
     </section>
