@@ -5,7 +5,6 @@ import PremiumShell from "../components/premium/PremiumShell";
 import PremiumSideNav from "../components/premium/PremiumSideNav";
 import PremiumFooter from "../components/premium/PremiumFooter";
 import ScrollFade from "../components/premium/ScrollFade";
-import Hero from "../components/premium/Hero";
 import AboutSection from "../components/premium/AboutSection";
 import HighlightsSection from "../components/premium/HighlightsSection";
 import ExperienceSection from "../components/premium/ExperienceSection";
@@ -45,9 +44,8 @@ export default function Home() {
   return (
     <PremiumShell>
       <Seo settings={content.settings} />
-      <PremiumSideNav name={content.profile.name} resumeUrl={content.profile.resumeUrl} sections={content.settings.sections} />
-      <div className="lg:pl-[210px] xl:pl-[240px]">
-        <ScrollFade><Hero profile={content.profile} /></ScrollFade>
+      <PremiumSideNav profile={content.profile} settings={content.settings} />
+      <div className="lg:pl-[300px] xl:pl-[340px]">
         <ScrollFade><AboutSection profile={content.profile} index={numbered(1)} /></ScrollFade>
         {orderedSections.map((s, i) => renderSection(s.key, content, numbered(i + 2)))}
         <ScrollFade><ContactSection settings={content.settings} index={contactIndex} /></ScrollFade>

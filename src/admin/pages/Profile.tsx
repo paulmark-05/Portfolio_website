@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { Field } from "../components/FormDrawer";
-import ImageUploader from "../components/ImageUploader";
 import RichTextEditor from "../components/RichTextEditor";
 import { SEED } from "../../lib/content";
 import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 import Sidebar from "../../components/layout/Sidebar";
 import About from "../../components/sections/About";
-import type { Profile, InfoCard, Settings } from "../../lib/types";
+import type { Profile, Settings } from "../../lib/types";
 
 const EMPTY_SETTINGS: Settings = {
   email: "", linkedin: "", github: "", contactImage: "",
@@ -22,6 +21,7 @@ export default function ProfileAdmin() {
   const qc = useQueryClient();
   const { run } = useToast();
   const [row, setRow] = useState<any>(null);
+  const [links, setLinks] = useState<{ github: string; linkedin: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState(false);
 
@@ -40,6 +40,12 @@ export default function ProfileAdmin() {
           hero_image: "",
         });
       }
+    });
+    // GitHub/LinkedIn live on the shared `settings` row (same one Contact
+    // edits) — fetched here too since they now show as sidebar icons
+    // alongside the rest of this identity block.
+    supabase!.from("settings").select("github,linkedin").eq("id", 1).maybeSingle().then(({ data }) => {
+      setLinks({ github: data?.github ?? "", linkedin: data?.linkedin ?? "" });
     });
   }, []);
 
@@ -61,12 +67,16 @@ export default function ProfileAdmin() {
         ({ error } = await supabase!.from("profiles").update(safe).eq("id", id));
       }
       if (error) throw error;
+      if (links) {
+        const { error: linkErr } = await supabase!.from("settings").upsert({ id: 1, github: links.github, linkedin: links.linkedin });
+        if (linkErr) throw linkErr;
+      }
       qc.invalidateQueries({ queryKey: ["site-content"] });
     }, { loading: "Saving profile…", success: "Profile updated", error: "Failed to save profile" });
     setBusy(false);
   };
 
-  if (!row) return <div className="admin-empty">Loading…</div>;
+  if (!row || !links) return <div className="admin-empty">Loading…</div>;
 
   const roles: string[] = row.roles || [];
   const setRoles = (next: string[]) => setRow({ ...row, roles: next });
@@ -86,6 +96,7 @@ export default function ProfileAdmin() {
     highlights: [],
     aboutImage: "", heroImage: mediaUrl(row.hero_image || ""), stackImage: "",
   };
+  const previewSettings: Settings = { ...EMPTY_SETTINGS, github: links.github, linkedin: links.linkedin };
 
   return (
     <div>
@@ -98,17 +109,17 @@ export default function ProfileAdmin() {
       </div>
 
       <div className="admin-form-grid">
-        <h2 className="admin-section-h">Sidebar photo</h2>
-        <Field label="Photo (square works best — shown at the top of the sidebar)">
-          <ImageUploader value={row.hero_image || ""} onChange={(p) => setRow({ ...row, hero_image: p })} label="sidebar photo" />
-        </Field>
-        {row.hero_image ? null : <p className="admin-hint">No photo set — the sidebar shows your initials instead.</p>}
-
         <h2 className="admin-section-h">Sidebar content</h2>
+        <p className="admin-hint" style={{ marginTop: -8, marginBottom: 16 }}>
+          Everything here shows permanently in the left sidebar — there's no separate "Main" section on the page anymore.
+        </p>
         <Field label="Availability badge"><input value={row.availability_badge || ""} placeholder="Open to internships" onChange={(e) => setRow({ ...row, availability_badge: e.target.value })} /></Field>
-        <Field label="Tagline (shown if no rotating roles are set below)"><input value={row.title || ""} onChange={(e) => setRow({ ...row, title: e.target.value })} /></Field>
-        <Field label="Résumé URL"><input value={row.resume_url || ""} onChange={(e) => setRow({ ...row, resume_url: e.target.value })} /></Field>
-        <p className="admin-hint">The sidebar's "Contact me" button always scrolls to the Contact section.</p>
+        <Field label="Name"><input value={row.name || ""} onChange={(e) => setRow({ ...row, name: e.target.value })} placeholder={SEED.profile.name} /></Field>
+        <Field label="Tagline"><input value={row.title || ""} onChange={(e) => setRow({ ...row, title: e.target.value })} /></Field>
+        <Field label="Résumé URL — shown as a sidebar icon"><input value={row.resume_url || ""} onChange={(e) => setRow({ ...row, resume_url: e.target.value })} placeholder="https://…" /></Field>
+        <Field label="GitHub URL — shown as a sidebar icon"><input value={links.github} onChange={(e) => setLinks({ ...links, github: e.target.value })} placeholder="https://github.com/…" /></Field>
+        <Field label="LinkedIn URL — shown as a sidebar icon"><input value={links.linkedin} onChange={(e) => setLinks({ ...links, linkedin: e.target.value })} placeholder="https://linkedin.com/in/…" /></Field>
+        <p className="admin-hint">Email is edited on the Contact page — it's shared with the Contact section's own links.</p>
 
         <h2 className="admin-section-h">Rotating role titles</h2>
         <div className="infocard-editor">
@@ -121,26 +132,6 @@ export default function ProfileAdmin() {
             </div>
           ))}
           <button className="btn btn-ghost" onClick={() => setRoles([...roles, ""])}>+ Add role</button>
-        </div>
-
-        <h2 className="admin-section-h">Sidebar info lines (e.g. school, location, GPA)</h2>
-        <div className="infocard-editor">
-          {(row.info_cards || []).map((c: InfoCard, i: number) => {
-            const cards = [...(row.info_cards || [])];
-            const update = (patch: Partial<InfoCard>) => { cards[i] = { ...cards[i], ...patch }; setRow({ ...row, info_cards: cards }); };
-            const move = (dir: -1 | 1) => { const j = i + dir; if (j < 0 || j >= cards.length) return; [cards[i], cards[j]] = [cards[j], cards[i]]; setRow({ ...row, info_cards: cards }); };
-            const del = () => { cards.splice(i, 1); setRow({ ...row, info_cards: cards }); };
-            return (
-              <div className="infocard-row" key={i}>
-                <input className="infocard-text" value={c.text} onChange={(e) => update({ text: e.target.value })} placeholder="Kolkata, India" />
-                <label className="admin-check infocard-vis"><input type="checkbox" checked={c.visible} onChange={(e) => update({ visible: e.target.checked })} /><span>Visible</span></label>
-                <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(-1)}>↑</button>
-                <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => move(1)}>↓</button>
-                <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={del}>✕</button>
-              </div>
-            );
-          })}
-          <button className="btn btn-ghost" onClick={() => setRow({ ...row, info_cards: [...(row.info_cards || []), { icon: "", text: "", visible: true }] })}>+ Add line</button>
         </div>
 
         <h2 className="admin-section-h">About paragraphs</h2>
@@ -172,7 +163,7 @@ export default function ProfileAdmin() {
           <div className="preview-body">
             <div className="preview-scope" data-theme="light">
               <div className="preview-layout">
-                <Sidebar profile={previewProfile} settings={EMPTY_SETTINGS} open onToggle={() => {}} />
+                <Sidebar profile={previewProfile} settings={previewSettings} open onToggle={() => {}} />
                 <div className="preview-layout-main">
                   <About profile={previewProfile} />
                 </div>

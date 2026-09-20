@@ -6,7 +6,7 @@ export default function AboutSection({ profile, index }: { profile: Profile; ind
   const facts = (profile.quickFacts || []).filter((f) => f.value);
 
   return (
-    <section id="about" className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24">
+    <section id="about" className="mx-auto max-w-6xl px-6 pb-16 pt-28 sm:px-10 sm:pb-24 lg:pt-16">
       <SectionLabel index={index}>{profile.aboutTitle || "About"}</SectionLabel>
 
       <div className="w-full space-y-6">
