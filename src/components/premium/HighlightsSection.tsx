@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SectionLabel from "./SectionLabel";
-import { RevealGroup, RevealItem } from "./Reveal";
+import { Reveal } from "./Reveal";
 import ImageLightbox from "../ui/ImageLightbox";
 import type { Highlight } from "../../lib/types";
 
@@ -13,12 +13,15 @@ export default function HighlightsSection({ highlights, index }: { highlights: H
     <section id="highlights" className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24">
       <SectionLabel index={index}>Highlights</SectionLabel>
 
-      <RevealGroup className="space-y-4">
+      {/* Each card gets its own Reveal (not a group stagger), so it fades
+          in as it individually scrolls into view — one by one as you
+          scroll, not all together when the section first appears. */}
+      <div className="space-y-4">
         {highlights.map((h, i) => {
           const images = h.images ?? [];
           const hasPhoto = images.length > 0;
           return (
-            <RevealItem
+            <Reveal
               key={i}
               className={`group rounded-2xl border border-edge/10 bg-surface/30 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-edge/20 hover:bg-surface/45 sm:p-8 ${
                 hasPhoto ? "grid gap-6 sm:grid-cols-[240px_1fr] sm:items-center" : ""
@@ -38,10 +41,10 @@ export default function HighlightsSection({ highlights, index }: { highlights: H
                 {h.headline && <h3 className="font-display text-xl text-bone">{h.headline}</h3>}
                 <p className="mt-3 text-justify text-sm leading-relaxed text-mist" dangerouslySetInnerHTML={{ __html: h.text }} />
               </div>
-            </RevealItem>
+            </Reveal>
           );
         })}
-      </RevealGroup>
+      </div>
 
       {open && (
         <ImageLightbox

@@ -2,7 +2,17 @@
    ADMIN CMS — reuses the portfolio design tokens so the CMS
    visually belongs to the site (makes it showcase-worthy).
    ============================================================ */
-.admin-shell{min-height:100vh;background:var(--paper);position:relative}
+.admin-shell{
+  min-height:100vh;background:var(--paper);position:relative;isolation:isolate;
+}
+/* two soft ambient glows — echoes the public site's satin background
+   instead of a flat void, without the cost of a WebGL canvas here. */
+.admin-shell::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60vw 60vh at 85% -10%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 60%),
+    radial-gradient(50vw 50vh at 0% 100%,color-mix(in srgb,var(--accent) 6%,transparent),transparent 65%);
+}
 /* frosted-glass sidebar — a permanent layout column, always open, pinned
    to the viewport so it never scrolls away. .admin-main carries a
    matching left margin (below) so content is never hidden behind it and
@@ -31,11 +41,14 @@
 nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-top:4px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;inset:auto}
 .admin-nav a{
   display:flex;align-items:center;gap:10px;
-  padding:9px 12px;border-radius:9px;font-size:14px;color:var(--muted);transition:.15s
+  padding:9px 12px;border-radius:9px;font-size:14px;color:var(--muted);transition:.2s
 }
 .admin-nav-idx{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
-.admin-nav a:hover{color:var(--ink);background:var(--card)}
-.admin-nav a.active{color:var(--ink);background:var(--card);font-weight:600;box-shadow:inset 2px 0 0 var(--accent),0 8px 20px -14px var(--shadow-med)}
+.admin-nav a:hover{color:var(--ink);background:color-mix(in srgb,var(--card) 80%,transparent)}
+.admin-nav a.active{
+  color:var(--ink);background:color-mix(in srgb,var(--accent) 12%,var(--card));font-weight:600;
+  box-shadow:inset 2px 0 0 var(--accent),0 0 0 1px color-mix(in srgb,var(--accent) 18%,transparent),0 8px 24px -14px color-mix(in srgb,var(--accent) 60%,transparent);
+}
 .admin-nav a.active .admin-nav-idx{color:var(--accent)}
 .admin-eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);display:block;margin-bottom:6px}
 .admin-user{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
@@ -56,15 +69,23 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 }
 .admin-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .admin-stat{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-  padding:22px;display:flex;flex-direction:column;gap:4px;transition:.18s
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:var(--r);
+  padding:22px;display:flex;flex-direction:column;gap:4px;transition:.25s var(--ease)
 }
-.admin-stat:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.admin-stat:hover{
+  border-color:color-mix(in srgb,var(--accent) 40%,var(--line-2));transform:translateY(-3px);
+  box-shadow:0 18px 40px -26px color-mix(in srgb,var(--accent) 55%,transparent);
+}
 .admin-stat b{font-family:var(--serif);font-size:34px;color:var(--ink)}
 .admin-stat span{color:var(--muted);font-size:13px}
-.admin-table{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
-.admin-tr{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:14px;padding:13px 18px;align-items:center;border-bottom:1px solid var(--line);font-size:14px}
+.admin-table{
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.admin-tr{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:14px;padding:13px 18px;align-items:center;border-bottom:1px solid var(--line);font-size:14px;transition:background .18s}
 .admin-tr:last-child{border-bottom:none}
+.admin-tr:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
 .admin-th{background:var(--paper-2);font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:600}
 .admin-row-actions{display:flex;gap:6px;justify-content:flex-end}
 .admin-empty{padding:34px;text-align:center;color:var(--muted);font-size:14px}
@@ -122,7 +143,12 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
    clearly labelled Icon / Headline / Details fields, instead of one bare
    row of inputs, so it's obvious what each field controls. */
 .highlight-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
-.highlight-row{border:1px solid var(--line);border-radius:12px;padding:14px 16px 2px;background:var(--card)}
+.highlight-row{
+  border:1px solid var(--line);border-radius:12px;padding:14px 16px 2px;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:border-color .2s;
+}
+.highlight-row:focus-within,.highlight-row:hover{border-color:color-mix(in srgb,var(--accent) 30%,var(--line-2))}
 .highlight-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .highlight-row-top{display:block}
 .highlight-row-top .admin-field{width:100%}
@@ -137,12 +163,16 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .rte-list-actions{display:flex;gap:6px}
 
 /* reorderable section list (Page sections) */
-.section-order{max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
+.section-order{
+  max-width:520px;margin:0 auto;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
 .section-order-row{
   display:flex;align-items:center;gap:12px;padding:12px 16px;
-  border-bottom:1px solid var(--line);transition:opacity .2s;
+  border-bottom:1px solid var(--line);transition:opacity .2s,background .18s;
 }
 .section-order-row:last-child{border-bottom:0}
+.section-order-row:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
 .section-order-row.is-hidden{opacity:.5}
 .section-order-row.pinned{background:var(--paper-2);color:var(--muted);font-size:13px;justify-content:space-between}
 .section-order-updown{display:flex;gap:4px}
@@ -157,8 +187,17 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-drawer-head h3{font-family:var(--serif);font-weight:500;font-size:20px}
 .admin-drawer-body{padding:22px;overflow-y:auto;flex:1}
 .admin-drawer-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--line)}
-.admin-login{min-height:100vh;display:grid;place-items:center;background:var(--paper);padding:20px}
-.admin-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:34px;width:min(400px,100%);box-shadow:0 30px 60px -30px var(--shadow-med)}
+.admin-login{min-height:100vh;display:grid;place-items:center;background:var(--paper);padding:20px;position:relative;overflow:hidden}
+.admin-login::before{
+  content:'';position:absolute;top:-20%;left:50%;translate:-50% 0;width:70vw;height:70vw;max-width:640px;max-height:640px;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.admin-card{
+  position:relative;background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--line);border-radius:var(--r);padding:34px;width:min(400px,100%);
+  box-shadow:0 30px 60px -30px var(--shadow-med),0 0 0 1px color-mix(in srgb,var(--accent) 10%,transparent);
+}
 .admin-error{color:var(--accent-2);font-size:13px;margin:6px 0}
 .admin-uploader{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .admin-uploader-preview{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -166,7 +205,12 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-uploader-hint{color:var(--muted);font-size:13px}
 .admin-thumb{width:72px;height:72px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:var(--paper-2)}
 .admin-media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.admin-media-item{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);display:flex;flex-direction:column}
+.admin-media-item{
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:border-color .2s;
+}
+.admin-media-item:hover{border-color:color-mix(in srgb,var(--accent) 35%,var(--line-2))}
 .admin-media-item img{width:100%;height:130px;object-fit:contain;display:block;background:var(--paper-2);border-bottom:1px solid var(--line)}
 .admin-media-meta{padding:10px 12px;flex:1}
 .admin-media-name{font-family:var(--mono);font-size:12px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
@@ -245,11 +289,15 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .skill-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
 .skill-kpi{
   position:relative;
-  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:14px;
   padding:22px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;
   transition:border-color .2s,transform .2s var(--ease),box-shadow .25s;
 }
-.skill-kpi:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:0 16px 40px -26px var(--shadow-med)}
+.skill-kpi:hover{
+  border-color:color-mix(in srgb,var(--accent) 40%,var(--line-2));transform:translateY(-3px);
+  box-shadow:0 16px 40px -22px color-mix(in srgb,var(--accent) 50%,transparent);
+}
 .skill-kpi-logo{width:48px;height:48px;display:grid;place-items:center}
 .skill-kpi-logo img{width:34px;height:34px;object-fit:contain}
 .skill-kpi-fallback{
@@ -286,13 +334,14 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
    than in a drawer, so they get their own card to sit in instead of
    floating loose fields directly on the page background. */
 .admin-form-grid{
-  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);border-radius:18px;
   padding:28px 36px 32px;
   box-shadow:0 1px 0 var(--shadow-soft),0 30px 70px -50px var(--shadow-med);
 }
 .admin-section-h{
   font-family:var(--mono);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
-  color:var(--ink);margin:30px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);
+  color:var(--ink);margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:9px;
 }
 .admin-section-h::before{content:'';width:16px;height:2px;border-radius:2px;background:var(--accent);flex-shrink:0}
@@ -335,7 +384,8 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 }
 .toast{
   display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 85%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);
   border-radius:12px;padding:12px 16px;min-width:220px;max-width:360px;
   box-shadow:0 18px 44px -18px var(--shadow-med);
   font-size:14px;color:var(--ink);
