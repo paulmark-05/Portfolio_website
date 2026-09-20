@@ -2,7 +2,6 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import SectionLabel from "./SectionLabel";
-import TechBubble from "./TechBubble";
 import { useSmoothScroll, scrollToHash } from "../../lib/smoothScroll";
 import { initialsOfOrg } from "../../lib/format";
 import type { Experience as Exp, Project } from "../../lib/types";
@@ -19,20 +18,71 @@ function startOf(duration: string): { label: string; key: number } {
   return { label: `${m[1].slice(0, 3)} ${m[2]}`, key: Number(m[2]) * 12 + mon };
 }
 
+const GLOW_LOW = 0.25;
+
+/** Builds the [scroll progress -> glow strength] keyframes: full glow
+ *  exactly where the dot is centered on an entry's marker, dipping down
+ *  while it travels the line between two markers. Guards against
+ *  non-increasing input, which framer-motion's useTransform requires. */
+function buildGlowCurve(markerProgress: number[]): { input: number[]; output: number[] } {
+  const input: number[] = [];
+  const output: number[] = [];
+  const push = (x: number, y: number) => {
+    const cx = Math.min(Math.max(x, 0), 1);
+    const last = input[input.length - 1];
+    if (last !== undefined && cx <= last + 0.001) return;
+    input.push(cx);
+    output.push(y);
+  };
+  if (markerProgress.length === 0) {
+    return { input: [0, 1], output: [1, 1] };
+  }
+  push(0, markerProgress[0] <= 0.02 ? 1 : GLOW_LOW);
+  markerProgress.forEach((p, i) => {
+    push(p, 1);
+    const next = markerProgress[i + 1];
+    if (next !== undefined) push((p + next) / 2, GLOW_LOW);
+  });
+  push(1, markerProgress[markerProgress.length - 1] >= 0.98 ? 1 : GLOW_LOW);
+  if (input.length < 2) { input.push(Math.min(input[0] + 1, 1)); output.push(output[0]); }
+  return { input, output };
+}
+
 export default function ExperienceSection({ experience, projects, index }: { experience: Exp[]; projects: Project[]; index: string }) {
   const { lenisRef } = useSmoothScroll();
   const navigate = useNavigate();
   const trackRef = useRef<HTMLDivElement>(null);
+  const markerRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [trackHeight, setTrackHeight] = useState(0);
+  const [markerProgress, setMarkerProgress] = useState<number[]>([]);
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start center", "end center"] });
   const dotTop = useTransform(scrollYProgress, [0, 1], [16, Math.max(trackHeight - 16, 16)]);
   const dotOpacity = useTransform(scrollYProgress, [0, 0.03, 0.97, 1], [0, 1, 1, 0]);
 
+  const { input: glowInput, output: glowOutput } = buildGlowCurve(markerProgress);
+  const glow = useTransform(scrollYProgress, glowInput, glowOutput);
+  const dotScale = useTransform(glow, [GLOW_LOW, 1], [0.7, 1.1]);
+  const dotShadow = useTransform(glow, (g) =>
+    `0 0 0 ${2 + 4 * g}px rgba(45,205,214,${(0.12 + 0.3 * g).toFixed(2)}), 0 0 ${6 + 18 * g}px ${2 + 4 * g}px rgba(45,205,214,${(0.25 + 0.4 * g).toFixed(2)})`
+  );
+
   useLayoutEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    const measure = () => setTrackHeight(el.offsetHeight);
+    const measure = () => {
+      const h = el.offsetHeight;
+      setTrackHeight(h);
+      const trackTop = el.getBoundingClientRect().top;
+      const lo = 16, hi = Math.max(h - 16, 16);
+      const progresses = markerRefs.current
+        .filter((m): m is HTMLSpanElement => !!m)
+        .map((m) => {
+          const y = m.getBoundingClientRect().top - trackTop + m.offsetHeight / 2;
+          return Math.min(Math.max((y - lo) / Math.max(hi - lo, 1), 0), 1);
+        });
+      setMarkerProgress(progresses);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -63,8 +113,10 @@ export default function ExperienceSection({ experience, projects, index }: { exp
         <motion.span
           aria-hidden="true"
           style={{ top: dotTop, opacity: dotOpacity }}
-          className="pointer-events-none absolute left-[140px] z-10 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0_5px_rgb(var(--pr-accent)/0.22),0_0_20px_4px_rgb(var(--pr-accent)/0.6)] sm:block"
-        />
+          className="pointer-events-none absolute left-[140px] z-10 hidden -translate-x-1/2 -translate-y-1/2 sm:block"
+        >
+          <motion.span style={{ scale: dotScale, boxShadow: dotShadow }} className="block h-3 w-3 rounded-full bg-accent" />
+        </motion.span>
 
         <ol className="space-y-0">
           {items.map(({ e, start }, i) => {
@@ -80,8 +132,9 @@ export default function ExperienceSection({ experience, projects, index }: { exp
                 className="relative -mx-4 rounded-2xl px-4 py-10 transition-colors duration-300 hover:bg-surface/20 sm:-mx-6 sm:grid sm:grid-cols-[120px_1fr] sm:gap-10 sm:px-6"
               >
                 <span
+                  ref={(el) => { markerRefs.current[i] = el; }}
                   aria-hidden="true"
-                  className="absolute left-[158px] top-[54px] hidden h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-edge/40 bg-void sm:block"
+                  className="absolute left-[158px] top-[54px] hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-edge/40 bg-void sm:block"
                 />
 
                 <div className="mb-4 flex items-center gap-3 sm:mb-0 sm:block">
@@ -102,12 +155,6 @@ export default function ExperienceSection({ experience, projects, index }: { exp
 
                   {e.stepLabel && <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">{e.stepLabel}</div>}
                   <p className="mt-4 max-w-2xl text-justify text-base leading-relaxed text-silver [&_b]:font-medium [&_b]:text-bone" dangerouslySetInnerHTML={{ __html: e.description }} />
-
-                  {e.tags.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      {e.tags.map((t) => <TechBubble key={t} name={t} size={32} />)}
-                    </div>
-                  )}
 
                   {linkedProject && (
                     <a
