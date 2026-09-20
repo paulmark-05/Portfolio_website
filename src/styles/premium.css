@@ -75,11 +75,9 @@ button {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease,
     border-color 0.3s ease, background-color 0.3s ease;
 }
-@media (hover: hover) and (pointer: fine) {
-  #premium-root .pr-btn-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 36px -10px rgb(var(--pr-accent) / 0.6);
-  }
+#premium-root .pr-btn-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -10px rgb(var(--pr-accent) / 0.6);
 }
 
 /* Same idea for plain text links (the side nav) that shouldn't get button
@@ -87,8 +85,6 @@ button {
 #premium-root .pr-text-glow {
   transition: text-shadow 0.3s ease, color 0.3s ease;
 }
-@media (hover: hover) and (pointer: fine) {
-  #premium-root .pr-text-glow:hover {
-    text-shadow: 0 0 16px rgb(var(--pr-accent) / 0.5);
-  }
+#premium-root .pr-text-glow:hover {
+  text-shadow: 0 0 16px rgb(var(--pr-accent) / 0.5);
 }

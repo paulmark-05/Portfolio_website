@@ -15,7 +15,7 @@ function IconLink({ href, label, icon, mail = false, small = false }: { href: st
       className={`pr-btn-hover group/icon relative flex shrink-0 items-center justify-center rounded-full border border-edge/12 bg-surface/25 text-mist backdrop-blur-md transition-colors hover:text-bone ${small ? "h-7 w-7" : "h-9 w-9"}`}
     >
       <span className={`flex items-center justify-center ${small ? "h-[13px] w-[13px]" : "h-[15px] w-[15px]"}`}>{icon}</span>
-      <span className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-edge/15 bg-surface/85 px-2.5 py-1 font-mono text-[11px] text-bone opacity-0 backdrop-blur-xl transition-opacity duration-150 [@media(hover:hover)_and_(pointer:fine)]:group-hover/icon:opacity-100">
+      <span className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-edge/15 bg-surface/85 px-2.5 py-1 font-mono text-[11px] text-bone opacity-0 backdrop-blur-xl transition-opacity duration-150 group-hover/icon:opacity-100">
         {label}
       </span>
     </a>

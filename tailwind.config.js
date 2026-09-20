@@ -36,15 +36,5 @@ export default {
       },
     },
   },
-  plugins: [
-    // Gate hover: and group-hover: behind a real pointer that can actually
-    // hover — without this, a tap on a touch device triggers the hover
-    // state (lift, glow, image zoom, overlay fade, …) and it stays "stuck"
-    // until something else is tapped, since there's no mouse to move away
-    // and un-hover it.
-    function ({ addVariant }) {
-      addVariant("hover", "@media (hover: hover) and (pointer: fine) { &:hover }");
-      addVariant("group-hover", "@media (hover: hover) and (pointer: fine) { :merge(.group):hover & }");
-    },
-  ],
+  plugins: [],
 };
