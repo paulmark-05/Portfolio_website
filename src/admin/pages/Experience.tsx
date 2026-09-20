@@ -12,15 +12,25 @@ interface Row {
   id: string; company: string; role: string; duration: string; step_label: string;
   description: string; tags: string[]; achievements: string[]; sort_order: number;
   start_date: string; end_date: string; current: boolean; location: string; logo: string;
+  linked_project_id: string;
 }
 const empty: Row = {
   id: "", company: "", role: "", duration: "", step_label: "", description: "",
   tags: [], achievements: [], sort_order: 0,
   start_date: "", end_date: "", current: false, location: "", logo: "",
+  linked_project_id: "",
 };
 
 export default function ExperienceAdmin() {
   const qc = useQueryClient();
+  const { data: projectOptions = [] } = useQuery({
+    queryKey: ["admin", "projects", "picker"],
+    queryFn: async () => {
+      const { data, error } = await supabase!.from("projects").select("id,title").order("sort_order");
+      if (error) throw error;
+      return data as { id: string; title: string }[];
+    },
+  });
   const { data: rows = [] } = useQuery({ queryKey: ["admin", "experience"], queryFn: async () => {
     const { data, error } = await supabase!.from("experience").select("*").order("sort_order"); if (error) throw error;
     return (data as any[]).map((r) => {
@@ -64,8 +74,8 @@ export default function ExperienceAdmin() {
 
     let { error } = await run(full);
     // Retry without the optional new columns if the DB doesn't have them yet.
-    if (error && /column .*(start_date|end_date|current|location|logo)/i.test(error.message)) {
-      const { start_date, end_date, current, location, logo, ...safe } = full;
+    if (error && /column .*(start_date|end_date|current|location|logo|linked_project_id)/i.test(error.message)) {
+      const { start_date, end_date, current, location, logo, linked_project_id, ...safe } = full;
       ({ error } = await run(safe));
     }
     setBusy(false); if (error) return alert(error.message); setDraft(null); refresh();
@@ -101,6 +111,12 @@ export default function ExperienceAdmin() {
         <FieldBlock label="Description"><RichTextEditor value={draft.description} onChange={(description) => setDraft({ ...draft, description })} rows={4} /></FieldBlock>
         <Field label="Tech tags (type to search)">
           <TechAutocomplete value={draft.tags} onChange={(tags) => setDraft({ ...draft, tags })} />
+        </Field>
+        <Field label="Linked project (optional — shows a “View project” button that jumps to it)">
+          <select value={draft.linked_project_id} onChange={(e) => setDraft({ ...draft, linked_project_id: e.target.value })}>
+            <option value="">None</option>
+            {projectOptions.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+          </select>
         </Field>
       </>)}
     </FormDrawer>

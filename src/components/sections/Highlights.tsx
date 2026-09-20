@@ -47,7 +47,6 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
                       <img src={images[0]} alt="" loading="lazy" />
                       <span className="hl-image-expand">View full ↗</span>
                     </button>
-                    <span className="hl-icon hl-icon-onimage" aria-hidden="true">{h.icon || "🏅"}</span>
                   </div>
                 )}
                 {images.length > 1 && (
@@ -67,7 +66,6 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
                 )}
                 <div className="hl-card-body">
                   <div className="hl-headline-row">
-                    {!hasPhoto && <span className="hl-icon" aria-hidden="true">{h.icon || "🏅"}</span>}
                     {h.headline && <h3 className="hl-headline">{h.headline}</h3>}
                   </div>
                   <p className="hl-text" dangerouslySetInnerHTML={{ __html: h.text }} />

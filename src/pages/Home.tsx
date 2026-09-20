@@ -1,67 +1,58 @@
-import { useEffect, useState } from "react";
 import { useContent } from "../hooks/useContent";
-import { useReveal } from "../hooks/useReveal";
 import { useRealtimeSync } from "../hooks/useRealtimeSync";
-import Nav from "../components/layout/Nav";
-import Sidebar from "../components/layout/Sidebar";
-import Footer from "../components/layout/Footer";
 import Seo from "../components/layout/Seo";
-import About from "../components/sections/About";
-import Highlights from "../components/sections/Highlights";
-import Experience from "../components/sections/Experience";
-import Achievements from "../components/sections/Achievements";
-import Stack from "../components/sections/Stack";
-import Projects from "../components/sections/Projects";
-import Certs from "../components/sections/Certs";
-import Contact from "../components/sections/Contact";
+import PremiumShell from "../components/premium/PremiumShell";
+import PremiumSideNav from "../components/premium/PremiumSideNav";
+import PremiumFooter from "../components/premium/PremiumFooter";
+import ScrollFade from "../components/premium/ScrollFade";
+import Hero from "../components/premium/Hero";
+import AboutSection from "../components/premium/AboutSection";
+import HighlightsSection from "../components/premium/HighlightsSection";
+import ExperienceSection from "../components/premium/ExperienceSection";
+import StackSection from "../components/premium/StackSection";
+import AchievementsSection from "../components/premium/AchievementsSection";
+import ProjectsSection from "../components/premium/ProjectsSection";
+import CertsSection from "../components/premium/CertsSection";
+import ContactSection from "../components/premium/ContactSection";
 import type { SiteContent, SectionKey } from "../lib/types";
 
-const SIDEBAR_KEY = "np-sidebar-open";
-
-/** Renders the one middle section for a given key — the display order and
- *  visibility both come from `settings.sections`, kept in sync with the
- *  Nav's link list so the menu always matches the page. */
-function renderSection(key: SectionKey, content: SiteContent) {
+function renderSection(key: SectionKey, content: SiteContent, index: string) {
   switch (key) {
-    case "highlights": return <Highlights key={key} highlights={content.profile.highlights} />;
-    case "work": return <Experience key={key} experience={content.experience} />;
-    case "stack": return <Stack key={key} skills={content.skills} />;
-    case "achievements": return <Achievements key={key} achievements={content.achievements} />;
-    case "projects": return <Projects key={key} projects={content.projects} />;
-    case "certs": return <Certs key={key} certs={content.certifications} />;
+    case "highlights": return <ScrollFade key={key}><HighlightsSection highlights={content.profile.highlights} index={index} /></ScrollFade>;
+    case "work": return <ScrollFade key={key}><ExperienceSection experience={content.experience} projects={content.projects} index={index} /></ScrollFade>;
+    case "stack": return <ScrollFade key={key}><StackSection skills={content.skills} settings={content.settings} index={index} /></ScrollFade>;
+    case "achievements": return <ScrollFade key={key}><AchievementsSection achievements={content.achievements} index={index} /></ScrollFade>;
+    case "projects": return <ScrollFade key={key}><ProjectsSection projects={content.projects} index={index} /></ScrollFade>;
+    case "certs": return <ScrollFade key={key}><CertsSection certs={content.certifications} index={index} /></ScrollFade>;
   }
+}
+
+/** About is always 01 and Contact is always last — the middle sections
+ *  number themselves off the admin-configured order/visibility, so hiding
+ *  or reordering a section from /admin never leaves a gap or a repeat. */
+function numbered(n: number): string {
+  return String(n).padStart(2, "0");
 }
 
 export default function Home() {
   const { content } = useContent();
   // Live CMS → portfolio updates over Supabase Realtime (no refresh needed).
   useRealtimeSync();
-  // re-run reveal observer whenever data-driven content changes
-  useReveal([content.projects.length, content.certifications.length, content.settings.sections.length, content.experience.length, content.profile.highlights.length]);
-
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    try { return localStorage.getItem(SIDEBAR_KEY) !== "0"; } catch { return true; }
-  });
-  useEffect(() => {
-    try { localStorage.setItem(SIDEBAR_KEY, sidebarOpen ? "1" : "0"); } catch { /* ignore */ }
-  }, [sidebarOpen]);
 
   const orderedSections = content.settings.sections.filter((s) => s.visible);
+  const contactIndex = numbered(orderedSections.length + 2);
 
   return (
-    <>
+    <PremiumShell>
       <Seo settings={content.settings} />
-      <Nav resumeUrl={content.profile.resumeUrl} sections={content.settings.sections} />
-      <div id="top" />
-      <div className={`layout${sidebarOpen ? "" : " sidebar-collapsed"}`}>
-        <Sidebar profile={content.profile} settings={content.settings} open={sidebarOpen} onToggle={() => setSidebarOpen((o) => !o)} />
-        <main className="layout-main">
-          <About profile={content.profile} />
-          {orderedSections.map((s) => renderSection(s.key, content))}
-          <Contact settings={content.settings} />
-        </main>
+      <PremiumSideNav name={content.profile.name} resumeUrl={content.profile.resumeUrl} sections={content.settings.sections} />
+      <div className="lg:pl-[210px] xl:pl-[240px]">
+        <ScrollFade><Hero profile={content.profile} /></ScrollFade>
+        <ScrollFade><AboutSection profile={content.profile} index={numbered(1)} /></ScrollFade>
+        {orderedSections.map((s, i) => renderSection(s.key, content, numbered(i + 2)))}
+        <ScrollFade><ContactSection settings={content.settings} index={contactIndex} /></ScrollFade>
+        <PremiumFooter />
       </div>
-      <Footer />
-    </>
+    </PremiumShell>
   );
 }

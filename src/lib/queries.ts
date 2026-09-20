@@ -75,11 +75,11 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           highlights: (
             profileR.data.highlights ?? (
               profileR.data.commendation
-                ? [{ icon: "🏅", headline: "", text: profileR.data.commendation, images: [] }]
+                ? [{ headline: "", text: profileR.data.commendation, images: [] }]
                 : SEED.profile.highlights
             )
           ).map((h: any) => ({
-            icon: h.icon ?? "", headline: h.headline ?? "", text: h.text ?? "",
+            headline: h.headline ?? "", text: h.text ?? "",
             images: (h.images ?? (h.image ? [h.image] : [])).map((p: string) => mediaUrl(p)).filter(Boolean),
           })),
           aboutImage: mediaUrl(profileR.data.about_image ?? SEED.profile.aboutImage),
@@ -104,6 +104,7 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           stepLabel: r.step_label ?? (r.current ? "Currently shipping" : "Experience"),
           description: r.description ?? "",
           tags: r.tags ?? [], logo: mediaUrl(r.logo ?? ""), sortOrder: r.sort_order ?? 0,
+          linkedProjectId: r.linked_project_id ?? "",
         }))
       : SEED.experience;
 

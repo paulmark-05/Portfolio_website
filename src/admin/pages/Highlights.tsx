@@ -14,7 +14,7 @@ import type { Highlight } from "../../lib/types";
  *  so highlights saved before multi-photo support still load correctly. */
 function normalize(raw: any): Highlight {
   return {
-    icon: raw.icon ?? "", headline: raw.headline ?? "", text: raw.text ?? "",
+    headline: raw.headline ?? "", text: raw.text ?? "",
     images: raw.images ?? (raw.image ? [raw.image] : []),
   };
 }
@@ -36,7 +36,7 @@ export default function HighlightsAdmin() {
       if (data) {
         setProfileId(data.id);
         const raw: any[] = data.highlights ??
-          (data.commendation ? [{ icon: "🏅", headline: "", text: data.commendation, images: [] }] : SEED.profile.highlights);
+          (data.commendation ? [{ headline: "", text: data.commendation, images: [] }] : SEED.profile.highlights);
         setItems(raw.map(normalize));
       } else {
         setItems(SEED.profile.highlights);
@@ -108,7 +108,6 @@ export default function HighlightsAdmin() {
                 </div>
               </div>
               <div className="highlight-row-top">
-                <Field label="Icon"><input value={h.icon} placeholder="🏅" onChange={(e) => update(i, { icon: e.target.value })} /></Field>
                 <Field label="Headline"><input value={h.headline} placeholder="Letter of Commendation" onChange={(e) => update(i, { headline: e.target.value })} /></Field>
               </div>
               <FieldBlock label="Details">
@@ -127,7 +126,7 @@ export default function HighlightsAdmin() {
               </Field>
             </div>
           ))}
-          <button className="btn btn-ghost" onClick={() => setItems([...items, { icon: "🏅", headline: "", text: "", images: [] }])}>+ Add highlight</button>
+          <button className="btn btn-ghost" onClick={() => setItems([...items, { headline: "", text: "", images: [] }])}>+ Add highlight</button>
         </div>
       </div>
 

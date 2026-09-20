@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The new full-bleed public site is a self-contained design system — it
+   does not read the --paper/--ink tokens from globals.css (those stay
+   reserved for /admin). Everything here is scoped to #premium-root so
+   nothing leaks out. Dark-only, a deep teal/cyan "ocean" palette — there is
+   no light variant to switch to. */
+#premium-root {
+  --pr-bg: 3 12 14;
+  --pr-surface: 8 28 32;
+  --pr-fg: 230 248 249;
+  --pr-fg-muted: 165 210 213;
+  --pr-fg-dim: 108 156 160;
+  --pr-edge: 190 232 235;
+  --pr-accent: 45 205 214;
+  --pr-overlay-top: rgba(2, 7, 8, 0.5);
+  --pr-overlay-bottom: rgba(2, 9, 10, 0.82);
+
+  background: rgb(var(--pr-bg));
+  color: rgb(var(--pr-fg));
+  position: relative;
+  min-height: 100vh;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* prevents a light-paper flash behind the satin canvas during elastic
+   overscroll (trackpad bounce) — only while a premium route is mounted, so
+   /admin's own light/dark theme is untouched */
+body:has(#premium-root) {
+  background: rgb(3 12 14);
+}
+
+#premium-root .font-display {
+  font-feature-settings: "ss01" 1, "ss02" 1;
+}
+
+#premium-root ::selection {
+  background: rgb(var(--pr-fg));
+  color: rgb(var(--pr-bg));
+}
+
+/* Minimal, zero/near-zero-specificity slice of Tailwind's own preflight —
+   applied by hand (not `preflight: true`) so it can't touch /admin's native
+   form-control styling, but still lets `border`/`border-*` utilities and
+   plain <button>s render correctly instead of the browser's default
+   outset/greybox chrome. Every selector here has specificity no higher than
+   a single type selector, so it never beats a Tailwind utility class
+   (0,1,0) or an existing admin.css class rule. */
+*, ::before, ::after {
+  border-width: 0;
+  border-style: solid;
+}
+button {
+  background-color: transparent;
+  background-image: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* thin scrollbar so the drag-marquee doesn't show a chunky native bar */
+.thin-scroll {
+  scrollbar-width: none;
+}
+.thin-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shared hover language for every clickable "button" on the site: a small
+   lift plus an accent glow, so the feel is consistent whether it's a pill
+   CTA, a tab, or a tech bubble. */
+#premium-root .pr-btn-hover {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease,
+    border-color 0.3s ease, background-color 0.3s ease;
+}
+#premium-root .pr-btn-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -10px rgb(var(--pr-accent) / 0.6);
+}
+
+/* Same idea for plain text links (the side nav) that shouldn't get button
+   chrome — just a soft glow instead of a shadow lift. */
+#premium-root .pr-text-glow {
+  transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+#premium-root .pr-text-glow:hover {
+  text-shadow: 0 0 16px rgb(var(--pr-accent) / 0.5);
+}

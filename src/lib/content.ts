@@ -43,7 +43,6 @@ export const SEED: SiteContent = {
     ],
     highlights: [
       {
-        icon: "🏅",
         headline: "Letter of Commendation",
         text: "Awarded by the Rajya Sainik Board for technical excellence and impact on public-service transparency.",
         images: [],

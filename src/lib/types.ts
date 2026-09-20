@@ -2,7 +2,7 @@ export interface CTA { label: string; href: string }
 export interface QuickFact { label: string; value: string }
 
 export interface InfoCard { icon: string; text: string; visible: boolean }
-export interface Highlight { icon: string; headline: string; text: string; images: string[] }   // text is HTML-allowed; up to 3 photos
+export interface Highlight { headline: string; text: string; images: string[] }   // text is HTML-allowed; up to 3 photos
 
 export interface Profile {
   name: string;
@@ -64,6 +64,7 @@ export interface Experience {
   tags: string[];
   logo: string;        // optional uploaded company logo; falls back to initials badge
   sortOrder: number;
+  linkedProjectId?: string;  // optional — links to a Project, scrolls there on click
 }
 
 export interface Skill {
