@@ -149,24 +149,33 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
         </div>
       </nav>
 
-      {/* Mobile / tablet — a compact top bar with the same links in a
-          full-screen drawer. */}
-      <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 lg:hidden">
-        <a href="#about" onClick={go("about")} className="rounded-full border border-edge/12 bg-surface/30 px-3.5 py-1.5 font-mono text-sm tracking-tight text-bone backdrop-blur-xl">
-          {profile.name.split(" ")[0]?.toLowerCase()}<span className="text-mist">.{profile.name.split(" ").slice(1).join("").toLowerCase() || "dev"}</span>
-        </a>
-        <div className="flex items-center gap-2">
+      {/* Mobile / tablet — a persistent top bar standing in for the
+          sidebar: name, tagline and the same four icon links stay visible
+          at all times (not just inside the opened drawer), since there's
+          no separate hero section to show them on mobile either. */}
+      <header className="fixed inset-x-0 top-0 z-50 flex flex-col gap-3 border-b border-edge/10 bg-void/60 px-5 pb-3.5 pt-4 backdrop-blur-xl lg:hidden">
+        <div className="flex items-center justify-between gap-3">
+          <a href="#about" onClick={go("about")} className="min-w-0">
+            <div className="truncate font-display text-lg leading-tight text-bone">{profile.name}</div>
+            {profile.title && <div className="mt-0.5 truncate font-mono text-[11px] text-mist">{profile.title}</div>}
+          </a>
           <button
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
-            className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] rounded-full border border-edge/15 bg-surface/30 backdrop-blur-xl"
+            className="flex h-9 w-9 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full border border-edge/15 bg-surface/30 backdrop-blur-xl"
           >
             <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 6 : 0 }} className="h-px w-4 bg-bone" />
             <motion.span animate={{ opacity: open ? 0 : 1 }} className="h-px w-4 bg-bone" />
             <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -6 : 0 }} className="h-px w-4 bg-bone" />
           </button>
         </div>
+
+        {iconLinks.length > 0 && (
+          <div className="flex items-center gap-2">
+            {iconLinks.map((l) => <IconLink key={l.label} {...l} />)}
+          </div>
+        )}
       </header>
 
       <AnimatePresence>
@@ -178,20 +187,22 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
             className="fixed inset-0 z-40 bg-void/95 backdrop-blur-xl lg:hidden"
           >
             <div className="flex h-full flex-col items-center justify-center gap-5">
-              {links.map(([id, label], i) => (
-                <motion.a
-                  key={id}
-                  href={`#${id}`}
-                  onClick={go(id)}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className={`flex items-center gap-3 font-display text-3xl ${active === id ? "text-bone" : "text-mist"}`}
-                >
-                  <span className="flex h-6 w-6 items-center justify-center">{SECTION_ICONS[id]}</span>
-                  {label}
-                </motion.a>
-              ))}
+              <div className="flex flex-col items-start gap-5">
+                {links.map(([id, label], i) => (
+                  <motion.a
+                    key={id}
+                    href={`#${id}`}
+                    onClick={go(id)}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className={`flex items-center gap-3 font-display text-3xl ${active === id ? "text-bone" : "text-mist"}`}
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center">{SECTION_ICONS[id]}</span>
+                    {label}
+                  </motion.a>
+                ))}
+              </div>
               {iconLinks.length > 0 && (
                 <div className="mt-4 flex items-center gap-3">
                   {iconLinks.map((l) => (

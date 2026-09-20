@@ -24,7 +24,7 @@ export default function PremiumProjectRow({ p, index = 0 }: { p: Project; index?
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
         transition={{ duration: 0.8, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-        className="group grid scroll-mt-28 gap-6 rounded-2xl border-t border-edge/10 px-4 -mx-4 py-10 transition-colors duration-300 first:border-t-0 hover:bg-surface/15 sm:grid-cols-[220px_1fr_auto] sm:items-center sm:gap-8 sm:px-6 sm:-mx-6"
+        className="group grid scroll-mt-36 gap-6 rounded-2xl border-t border-edge/10 px-4 -mx-4 py-10 transition-colors duration-300 first:border-t-0 hover:bg-surface/15 sm:grid-cols-[220px_1fr_auto] sm:items-center sm:gap-8 sm:px-6 sm:-mx-6"
       >
         <button
           type="button"
