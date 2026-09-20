@@ -148,7 +148,9 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .highlight-list{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
 .highlight-row{border:1px solid var(--line);border-radius:12px;padding:14px 16px 2px;background:var(--card)}
 .highlight-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.highlight-row-top{display:grid;grid-template-columns:90px 1fr;gap:14px}
+.highlight-row-top{display:block}
+.highlight-row-top .admin-field{width:100%}
+.highlight-row-top input{width:100%;box-sizing:border-box}
 /* up to 3 photos per highlight — one uploader + remove button per slot */
 .hl-photos-editor{display:flex;flex-direction:column;gap:10px}
 .hl-photo-slot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}

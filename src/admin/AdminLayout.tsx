@@ -20,14 +20,16 @@ const icMenu = (
 export default function AdminLayout() {
   const { session, signOut } = useAuth();
   const nav = useNavigate();
-  // Defaults open on a normal desktop, closed on a narrow screen so the
-  // nav doesn't eat the whole viewport on first load.
+  // Always stays open by default — it used to auto-collapse under a 900px
+  // window width, which made it disappear on anything but a full-width
+  // desktop browser (including this app's own embedded preview pane).
+  // The manual toggle below still works if someone wants to tuck it away.
   const [open, setOpen] = useState(() => {
     try {
       const saved = localStorage.getItem(NAV_KEY);
       if (saved !== null) return saved === "1";
     } catch { /* ignore */ }
-    return typeof window === "undefined" || window.innerWidth > 900;
+    return true;
   });
 
   useEffect(() => {
