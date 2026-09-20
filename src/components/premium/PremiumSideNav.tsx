@@ -48,7 +48,10 @@ export default function PremiumSideNav({ name, resumeUrl, sections }: { name: st
   const go = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     setOpen(false);
-    scrollToHash(lenisRef, `#${id}`);
+    // Offset 0 — the picked section's top lands flush with the viewport
+    // top, so it reads as its own full-viewport "page" rather than
+    // scrolling to wherever it happens to sit with some breathing room.
+    scrollToHash(lenisRef, `#${id}`, 0);
   };
 
   return (

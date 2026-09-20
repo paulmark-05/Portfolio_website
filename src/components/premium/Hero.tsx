@@ -115,22 +115,6 @@ export default function Hero({ profile }: { profile: Profile }) {
           )}
         </motion.div>
       </div>
-
-      <motion.button
-        onClick={() => scrollToHash(lenisRef, "#about")}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.2 }}
-        aria-label="Scroll to About"
-        className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-mist"
-      >
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-        <motion.span
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          className="h-8 w-px bg-gradient-to-b from-mist to-transparent"
-        />
-      </motion.button>
     </section>
   );
 }

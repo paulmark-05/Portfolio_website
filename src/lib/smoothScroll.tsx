@@ -59,13 +59,16 @@ export function useSmoothScroll() {
 }
 
 /** Smoothly scroll to an in-page anchor via Lenis, with a graceful fallback
- *  for the (unlikely) case the provider hasn't mounted yet. */
-export function scrollToHash(lenisRef: MutableRefObject<Lenis | null>, hash: string) {
+ *  for the (unlikely) case the provider hasn't mounted yet. `offset`
+ *  defaults to a little breathing room above the target; pass 0 to land
+ *  the target's top flush with the viewport's top (e.g. sidebar nav,
+ *  where a section should read as its own full-viewport "page"). */
+export function scrollToHash(lenisRef: MutableRefObject<Lenis | null>, hash: string, offset = -84) {
   const el = document.querySelector(hash);
   if (!(el instanceof HTMLElement)) return;
   if (lenisRef.current) {
     lenisRef.current.scrollTo(el, {
-      offset: -84,
+      offset,
       duration: 1.6,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
