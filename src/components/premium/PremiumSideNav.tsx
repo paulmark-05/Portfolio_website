@@ -22,16 +22,16 @@ function RoleCycle({ roles }: { roles: string[] }) {
   );
 }
 
-function IconLink({ href, label, icon, mail = false }: { href: string; label: string; icon: JSX.Element; mail?: boolean }) {
+function IconLink({ href, label, icon, mail = false, small = false }: { href: string; label: string; icon: JSX.Element; mail?: boolean; small?: boolean }) {
   return (
     <a
       href={href}
       target={mail ? undefined : "_blank"}
       rel={mail ? undefined : "noopener"}
       aria-label={label}
-      className="pr-btn-hover group/icon relative flex h-9 w-9 items-center justify-center rounded-full border border-edge/12 bg-surface/25 text-mist backdrop-blur-md transition-colors hover:text-bone"
+      className={`pr-btn-hover group/icon relative flex shrink-0 items-center justify-center rounded-full border border-edge/12 bg-surface/25 text-mist backdrop-blur-md transition-colors hover:text-bone ${small ? "h-7 w-7" : "h-9 w-9"}`}
     >
-      <span className="flex h-[15px] w-[15px] items-center justify-center">{icon}</span>
+      <span className={`flex items-center justify-center ${small ? "h-[13px] w-[13px]" : "h-[15px] w-[15px]"}`}>{icon}</span>
       <span className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-edge/15 bg-surface/85 px-2.5 py-1 font-mono text-[11px] text-bone opacity-0 backdrop-blur-xl transition-opacity duration-150 group-hover/icon:opacity-100">
         {label}
       </span>
@@ -149,32 +149,31 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
         </div>
       </nav>
 
-      {/* Mobile / tablet — a compact, persistent top bar: brand pill +
-          burger on the first row, the same four icon links on the second.
-          The actual name/tagline intro lives as real page content just
-          above About (see Home.tsx) instead of living in this bar. */}
-      <header className="fixed inset-x-0 top-0 z-50 flex flex-col gap-3 border-b border-edge/10 bg-void/60 px-5 pb-3.5 pt-4 backdrop-blur-xl lg:hidden">
-        <div className="flex items-center justify-between gap-3">
-          <a href="#about" onClick={go("about")} className="rounded-full border border-edge/12 bg-surface/30 px-3.5 py-1.5 font-mono text-sm tracking-tight text-bone backdrop-blur-xl">
-            {profile.name.split(" ")[0]?.toLowerCase()}<span className="text-mist">.{profile.name.split(" ").slice(1).join("").toLowerCase() || "dev"}</span>
-          </a>
-          <button
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-            className="flex h-9 w-9 shrink-0 flex-col items-center justify-center gap-[5px] rounded-full border border-edge/15 bg-surface/30 backdrop-blur-xl"
-          >
-            <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 6 : 0 }} className="h-px w-4 bg-bone" />
-            <motion.span animate={{ opacity: open ? 0 : 1 }} className="h-px w-4 bg-bone" />
-            <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -6 : 0 }} className="h-px w-4 bg-bone" />
-          </button>
-        </div>
+      {/* Mobile / tablet — everything in one persistent row: the brand
+          mark, the four icon links, and the burger. The actual name/
+          tagline intro lives as real page content just above About (see
+          Home.tsx) instead of living in this bar. */}
+      <header className="fixed inset-x-0 top-0 z-50 flex items-center gap-3 overflow-x-auto border-b border-edge/10 bg-void/60 px-4 py-3 backdrop-blur-xl lg:hidden">
+        <a href="#about" onClick={go("about")} className="shrink-0 font-mono text-sm tracking-tight text-bone">
+          <span className="text-mist">{"</"}</span>nayani<span className="text-mist">.paul</span><span className="text-mist">{">"}</span>
+        </a>
 
         {iconLinks.length > 0 && (
-          <div className="flex items-center gap-2">
-            {iconLinks.map((l) => <IconLink key={l.label} {...l} />)}
+          <div className="flex shrink-0 items-center gap-1.5">
+            {iconLinks.map((l) => <IconLink key={l.label} {...l} small />)}
           </div>
         )}
+
+        <button
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          className="ml-auto flex h-8 w-8 shrink-0 flex-col items-center justify-center gap-[5px]"
+        >
+          <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 6 : 0 }} className="h-px w-4 bg-bone" />
+          <motion.span animate={{ opacity: open ? 0 : 1 }} className="h-px w-4 bg-bone" />
+          <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -6 : 0 }} className="h-px w-4 bg-bone" />
+        </button>
       </header>
 
       <AnimatePresence>

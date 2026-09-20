@@ -8,7 +8,7 @@ import type { Profile } from "../../lib/types";
  *  live before it was folded into the sidebar. */
 export default function MobileIntro({ profile }: { profile: Profile }) {
   return (
-    <section className="px-6 pb-10 pt-32 lg:hidden">
+    <section className="px-6 pb-10 pt-20 lg:hidden">
       {profile.availabilityBadge && (
         <motion.span
           initial={{ opacity: 0, y: 12 }}
