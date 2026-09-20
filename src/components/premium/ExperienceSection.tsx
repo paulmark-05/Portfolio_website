@@ -89,12 +89,12 @@ export default function ExperienceSection({ experience, projects, index }: { exp
       <div className="relative" ref={trackRef}>
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 left-[140px] top-0 hidden w-px bg-edge/12 sm:block"
+          className="pointer-events-none absolute -left-2 bottom-0 top-0 block w-px bg-edge/12 sm:left-[140px]"
         />
         <motion.div
           aria-hidden="true"
           style={{ height: trailHeight }}
-          className="pointer-events-none absolute left-[140px] top-0 hidden w-[3px] -translate-x-1/2 overflow-hidden rounded-full sm:block"
+          className="pointer-events-none absolute -left-2 top-0 block w-[3px] -translate-x-1/2 overflow-hidden rounded-full sm:left-[140px]"
         >
           <div
             className="absolute bottom-0 left-0 right-0"
@@ -107,7 +107,7 @@ export default function ExperienceSection({ experience, projects, index }: { exp
         <motion.span
           aria-hidden="true"
           style={{ top: clampedY, opacity: tipOpacity }}
-          className="pointer-events-none absolute left-[140px] z-10 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0_5px_rgb(var(--pr-accent)/0.25),0_0_22px_5px_rgb(var(--pr-accent)/0.65)] sm:block"
+          className="pointer-events-none absolute -left-2 z-10 block h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0_5px_rgb(var(--pr-accent)/0.25),0_0_22px_5px_rgb(var(--pr-accent)/0.65)] sm:left-[140px]"
         />
 
         <ol className="space-y-0">

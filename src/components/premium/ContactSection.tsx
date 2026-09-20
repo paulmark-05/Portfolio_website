@@ -18,7 +18,7 @@ export default function ContactSection({ settings, index }: { settings: Settings
         <p className="mt-6 max-w-xl text-justify text-base leading-relaxed text-mist" dangerouslySetInnerHTML={{ __html: settings.contactDescription }} />
       </Reveal>
 
-      <Reveal delay={0.2} className="mt-10 flex flex-wrap gap-4">
+      <Reveal delay={0.2} className="mt-10 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
         <a href={`mailto:${settings.email}`} className="pr-btn-hover rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
           Email ↗
         </a>
