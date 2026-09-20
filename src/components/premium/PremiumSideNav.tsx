@@ -31,7 +31,7 @@ function IconLink({ href, label, icon, mail = false }: { href: string; label: st
       aria-label={label}
       className="pr-btn-hover group/icon relative flex h-9 w-9 items-center justify-center rounded-full border border-edge/12 bg-surface/25 text-mist backdrop-blur-md transition-colors hover:text-bone"
     >
-      <span className="h-[15px] w-[15px]">{icon}</span>
+      <span className="flex h-[15px] w-[15px] items-center justify-center">{icon}</span>
       <span className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-edge/15 bg-surface/85 px-2.5 py-1 font-mono text-[11px] text-bone opacity-0 backdrop-blur-xl transition-opacity duration-150 group-hover/icon:opacity-100">
         {label}
       </span>
@@ -110,8 +110,8 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
               {profile.availabilityBadge}
             </span>
           )}
-          <h1 className="font-display text-3xl font-light leading-[1.05] text-bone xl:text-[2.25rem]">{profile.name}</h1>
-          {profile.title && <p className="mt-2 font-display text-base font-light text-silver">{profile.title}</p>}
+          <h1 className="font-display text-4xl font-light leading-[1.02] tracking-tightest text-bone xl:text-[2.65rem]">{profile.name}</h1>
+          {profile.title && <p className="mt-3 font-display text-lg font-light leading-snug text-silver">{profile.title}</p>}
           <div className="mt-3"><RoleCycle roles={roles} /></div>
 
           {iconLinks.length > 0 && (
@@ -188,7 +188,7 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
                   transition={{ delay: i * 0.05 }}
                   className={`flex items-center gap-3 font-display text-3xl ${active === id ? "text-bone" : "text-mist"}`}
                 >
-                  <span className="h-6 w-6">{SECTION_ICONS[id]}</span>
+                  <span className="flex h-6 w-6 items-center justify-center">{SECTION_ICONS[id]}</span>
                   {label}
                 </motion.a>
               ))}
@@ -204,7 +204,7 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
                       onClick={() => setOpen(false)}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-edge/20 bg-surface/30 text-bone backdrop-blur-xl"
                     >
-                      <span className="h-4 w-4">{l.icon}</span>
+                      <span className="flex h-4 w-4 items-center justify-center">{l.icon}</span>
                     </a>
                   ))}
                 </div>

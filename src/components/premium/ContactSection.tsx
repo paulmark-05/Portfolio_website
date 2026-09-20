@@ -19,7 +19,7 @@ export default function ContactSection({ settings, index }: { settings: Settings
       </Reveal>
 
       <Reveal delay={0.2} className="mt-10 flex flex-wrap gap-4">
-        <a href={`mailto:${settings.email}`} className="pr-btn-hover rounded-full bg-bone px-6 py-3 text-sm font-medium text-void shadow-[0_8px_30px_-10px_rgb(var(--pr-accent)/0.5)]">
+        <a href={`mailto:${settings.email}`} className="pr-btn-hover rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
           Email ↗
         </a>
         {settings.linkedin && (
