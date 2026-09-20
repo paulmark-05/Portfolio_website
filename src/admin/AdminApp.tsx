@@ -1,11 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext";
 import { ToastProvider } from "../context/ToastContext";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminLayout from "./AdminLayout";
 import Login from "./Login";
 import ResetPassword from "./ResetPassword";
-import Dashboard from "./pages/Dashboard";
 import Sections from "./pages/Sections";
 import Profile from "./pages/Profile";
 import Highlights from "./pages/Highlights";
@@ -26,7 +25,7 @@ export default function AdminApp() {
           <Route path="login" element={<Login />} />
           <Route path="reset-password" element={<ResetPassword />} />
           <Route element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<Navigate to="sections" replace />} />
             <Route path="sections" element={<Sections />} />
             <Route path="profile" element={<Profile />} />
             <Route path="highlights" element={<Highlights />} />

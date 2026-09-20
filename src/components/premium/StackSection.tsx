@@ -30,10 +30,10 @@ function Bubble({ s, selected, onToggle }: { s: Skill; selected: boolean; onTogg
       onClick={onToggle}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
-      className={`pr-btn-hover group relative mx-2 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-2xl border bg-surface/30 backdrop-blur-xl sm:h-20 sm:w-20 ${
-        selected ? "border-edge/50 -translate-y-1" : "border-edge/10 hover:border-edge/30 hover:bg-surface/45"
+      className={`group relative mx-2 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-2xl border bg-surface/30 backdrop-blur-xl transition-all duration-300 sm:h-20 sm:w-20 ${
+        visible ? "border-edge/50 -translate-y-1" : "border-edge/10"
       }`}
-      style={{ boxShadow: selected ? `0 0 0 1px ${s.color}55, 0 12px 28px -8px ${s.color}55` : undefined }}
+      style={{ boxShadow: visible ? `0 0 0 1px ${s.color}55, 0 12px 28px -8px ${s.color}aa, 0 0 32px 4px ${s.color}55` : undefined }}
     >
       {logo ? (
         <img src={logo} alt={label} width={30} height={30} loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
@@ -84,7 +84,7 @@ export default function StackSection({ skills, settings, index }: { skills: Skil
       </div>
 
       <Reveal delay={0.15}>
-        <div className="thin-scroll overflow-x-auto py-2" ref={rowRef}>
+        <div className="thin-scroll overflow-x-auto pb-16 pt-6" ref={rowRef}>
           <div className="flex w-max px-6 sm:px-10">
             {skills.map((s) => <Bubble s={s} key={s.id} selected={selected === s.id} onToggle={() => toggle(s.id)} />)}
             {skills.map((s) => <Bubble s={s} key={`${s.id}-dup`} selected={selected === s.id} onToggle={() => toggle(s.id)} />)}

@@ -3,9 +3,10 @@
    visually belongs to the site (makes it showcase-worthy).
    ============================================================ */
 .admin-shell{min-height:100vh;background:var(--paper);position:relative}
-/* frosted-glass drawer — slides in from the left at every width, with a
-   blurred/translucent panel over whatever's behind it rather than a flat
-   fill, for a more "app" feel than a plain sidebar. */
+/* frosted-glass sidebar — a permanent layout column, always open, pinned
+   to the viewport so it never scrolls away. .admin-main carries a
+   matching left margin (below) so content is never hidden behind it and
+   there's no toggle needed to reveal anything. */
 .admin-sidebar{
   border-right:1px solid color-mix(in srgb,var(--line) 70%,transparent);
   padding:22px 18px;
@@ -16,32 +17,7 @@
   -webkit-backdrop-filter:blur(22px) saturate(1.6);
   box-shadow:14px 0 50px -24px rgba(0,0,0,.4);
   z-index:20;min-width:0;overflow-y:auto;
-  transition:transform .3s var(--ease);
 }
-.admin-shell.nav-collapsed .admin-sidebar{transform:translateX(-100%)}
-/* retract handle — always reachable, sits at the sidebar's edge when open
-   and snaps back to the corner once it's tucked away. */
-.admin-nav-toggle{
-  position:fixed;top:20px;left:266px;z-index:30;
-  width:34px;height:34px;border-radius:9px;flex-shrink:0;
-  display:grid;place-items:center;cursor:pointer;
-  background:var(--card);border:1px solid var(--line);color:var(--ink-2);
-  box-shadow:0 8px 20px -10px var(--shadow-med);
-  transition:left .25s var(--ease),background .15s,border-color .15s,color .15s;
-}
-.admin-nav-toggle:hover{border-color:var(--accent);color:var(--accent)}
-.admin-nav-toggle svg{width:16px;height:16px}
-.admin-shell.nav-collapsed .admin-nav-toggle{left:18px}
-/* dims/blurs the page behind the drawer whenever it's open — the sidebar
-   is a popover at every width now (content never shifts to make room for
-   it), so this is what makes it read as "floating over the page" rather
-   than pushing the layout around. Click it to close. */
-.admin-nav-scrim{
-  position:fixed;inset:0;z-index:19;
-  background:color-mix(in srgb,var(--ink) 30%,transparent);
-  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
-}
-.admin-shell:not(.nav-collapsed) .admin-nav-scrim{opacity:1;pointer-events:auto}
 .admin-sidebar .logo{font-family:var(--mono);font-size:13px;display:flex;align-items:center;gap:9px;color:var(--ink)}
 .admin-sidebar .logo .dot{
   width:7px;height:7px;border-radius:50%;background:var(--accent);position:relative;
@@ -63,10 +39,10 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-nav a.active .admin-nav-idx{color:var(--accent)}
 .admin-eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);display:block;margin-bottom:6px}
 .admin-user{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
-/* the sidebar is a popover, not a layout column — .admin-main always
-   fills the full viewport and never shifts for it, so opening/closing
-   the drawer can't nudge the page content around. */
-.admin-main{padding:38px 44px;width:100%}
+/* offset by the sidebar's fixed width so content is never hidden behind
+   it — margin-left (not width:100%) so the browser's auto block width
+   correctly fills only the remaining space. */
+.admin-main{margin-left:248px;padding:38px 44px}
 /* .admin-page caps and centers the content within .admin-main, so it
    sits in the middle of the page at any width instead of hugging the
    left edge and leaving a dead void on the right. */
@@ -201,16 +177,11 @@ nav.admin-nav{position:static;display:flex;flex-direction:column;gap:2px;margin-
 .admin-media-actions{display:flex;justify-content:space-between;gap:6px;padding:8px 10px;border-top:1px solid var(--line)}
 @media(max-width:900px){
   .admin-stats{grid-template-columns:repeat(2,1fr)}
-  .admin-main{padding:70px 18px 24px}
-  .admin-nav-toggle{left:18px}
-  /* .admin-toolbar is position:sticky;top:0 — once the page scrolls it
-     rises to the very top of the screen, where its title sat at the same
-     18px left offset as the fixed burger button and ran straight under
-     it. Room on the left keeps them apart at every scroll position. */
-  .admin-toolbar{padding-left:54px}
+  .admin-main{padding:24px 18px}
 }
 @media(max-width:760px){
-  .admin-main{padding:20px 14px}
+  .admin-sidebar{width:210px}
+  .admin-main{margin-left:210px;padding:20px 14px}
   .admin-tr{grid-template-columns:1fr auto}
   .admin-tr>div:nth-child(2),.admin-tr>div:nth-child(3){display:none}
   .admin-toolbar{flex-direction:column;align-items:flex-start;gap:12px}
