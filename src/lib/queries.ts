@@ -56,6 +56,7 @@ export async function fetchSiteContent(): Promise<SiteContent> {
           availabilityBadge: profileR.data.availability_badge ?? SEED.profile.availabilityBadge,
           subtitle: profileR.data.subtitle ?? SEED.profile.subtitle,
           roles: profileR.data.roles ?? SEED.profile.roles,
+          roleSummary: profileR.data.role_summary ?? SEED.profile.roleSummary,
           ctaPrimary: profileR.data.cta_primary ?? SEED.profile.ctaPrimary,
           ctaGhost: profileR.data.cta_ghost ?? SEED.profile.ctaGhost,
           resumeUrl: profileR.data.resume_url ?? SEED.profile.resumeUrl,

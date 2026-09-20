@@ -50,7 +50,7 @@ export default function Home() {
         <MobileIntro profile={content.profile} />
         <ScrollFade><AboutSection profile={content.profile} index={numbered(1)} /></ScrollFade>
         {orderedSections.map((s, i) => renderSection(s.key, content, numbered(i + 2)))}
-        <ScrollFade><ContactSection settings={content.settings} index={contactIndex} /></ScrollFade>
+        <ScrollFade><ContactSection settings={content.settings} resumeUrl={content.profile.resumeUrl} index={contactIndex} /></ScrollFade>
         <PremiumFooter />
       </div>
     </PremiumShell>

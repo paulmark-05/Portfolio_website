@@ -10,7 +10,8 @@ export interface Profile {
   subtitle: string;
   availabilityBadge: string;   // editable hero "Open to…" badge
   aboutTitle: string;          // editable About section heading
-  roles: string[];
+  roles: string[];             // legacy — only the pre-redesign preview still reads this
+  roleSummary: string;         // one-line "what I do" sentence shown in the sidebar/mobile intro
   ctaPrimary: CTA;
   ctaGhost: CTA;
   resumeUrl: string;

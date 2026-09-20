@@ -8,7 +8,7 @@ import { mediaUrl } from "../../lib/queries";
 import { useToast } from "../../context/ToastContext";
 import Sidebar from "../../components/layout/Sidebar";
 import About from "../../components/sections/About";
-import type { Profile, Settings } from "../../lib/types";
+import type { Profile, QuickFact, Settings } from "../../lib/types";
 
 const EMPTY_SETTINGS: Settings = {
   email: "", linkedin: "", github: "", contactImage: "",
@@ -16,6 +16,16 @@ const EMPTY_SETTINGS: Settings = {
   stackTitle: "", stackQuote: "", stackDescription: "",
   seoTitle: "", seoDesc: "", seoKeywords: [], sections: [],
 };
+
+// Starting point shown the first time this page loads with no quick
+// facts saved yet — all editable/removable afterward. "Interests" is
+// left blank on purpose: that one's personal, not something to guess.
+const DEFAULT_QUICK_FACTS: QuickFact[] = [
+  { label: "Education", value: "Computer Science, KIIT — 2027" },
+  { label: "Focus", value: "Full-Stack · AI" },
+  { label: "Interests", value: "" },
+  { label: "Status", value: "Open to roles" },
+];
 
 export default function ProfileAdmin() {
   const qc = useQueryClient();
@@ -35,8 +45,10 @@ export default function ProfileAdmin() {
           availability_badge: SEED.profile.availabilityBadge,
           subtitle: SEED.profile.subtitle, resume_url: "",
           cta_primary: SEED.profile.ctaPrimary, roles: SEED.profile.roles,
+          role_summary: SEED.profile.roleSummary,
           about_md: SEED.profile.aboutParagraphs.join("\n\n"),
           info_cards: SEED.profile.infoCards,
+          quick_facts: DEFAULT_QUICK_FACTS,
           hero_image: "",
         });
       }
@@ -57,13 +69,20 @@ export default function ProfileAdmin() {
       const full: any = {
         name: row.name, title: row.title, availability_badge: row.availability_badge,
         subtitle: row.subtitle, resume_url: row.resume_url,
-        cta_primary: row.cta_primary, roles: row.roles,
+        cta_primary: row.cta_primary, roles: row.roles, role_summary: row.role_summary,
         about_md: row.about_md,
-        info_cards: row.info_cards, hero_image: row.hero_image,
+        info_cards: row.info_cards, quick_facts: row.quick_facts, hero_image: row.hero_image,
       };
       let { error } = await supabase!.from("profiles").update(full).eq("id", id);
-      if (error && /column .*(availability_badge|info_cards|roles)/i.test(error.message)) {
-        const { availability_badge, info_cards, roles, ...safe } = full;
+      // PostgREST reports a stale schema cache as "Could not find the 'X'
+      // column of 'profiles' in the schema cache" — strip whichever column
+      // it names and retry, so a column that exists in the DB but hasn't
+      // hit the cache yet doesn't block saving everything else.
+      const safe: any = { ...full };
+      while (error) {
+        const missing = error.message.match(/Could not find the '(\w+)' column/i)?.[1];
+        if (!missing || !(missing in safe)) break;
+        delete safe[missing];
         ({ error } = await supabase!.from("profiles").update(safe).eq("id", id));
       }
       if (error) throw error;
@@ -78,8 +97,8 @@ export default function ProfileAdmin() {
 
   if (!row || !links) return <div className="admin-empty">Loading…</div>;
 
-  const roles: string[] = row.roles || [];
-  const setRoles = (next: string[]) => setRow({ ...row, roles: next });
+  const quickFacts: QuickFact[] = row.quick_facts?.length ? row.quick_facts : DEFAULT_QUICK_FACTS;
+  const setQuickFacts = (next: QuickFact[]) => setRow({ ...row, quick_facts: next });
 
   const rawParas = (row.about_md || "").split("\n\n").filter((p: string) => p.trim() !== "");
   const paras: string[] = rawParas.length ? rawParas : [""];
@@ -89,10 +108,10 @@ export default function ProfileAdmin() {
   const previewProfile: Profile = {
     name: row.name || "", title: row.title || "",
     availabilityBadge: row.availability_badge || "",
-    subtitle: row.subtitle || "", roles,
+    subtitle: row.subtitle || "", roles: row.roles || [], roleSummary: row.role_summary || "",
     ctaPrimary: { label: "", href: "" }, ctaGhost: { label: "", href: "" }, resumeUrl: row.resume_url || "",
     aboutParagraphs: (row.about_md || "").split("\n\n").filter(Boolean),
-    aboutTitle: "", quickFacts: [], infoCards: row.info_cards || [],
+    aboutTitle: "", quickFacts, infoCards: row.info_cards || [],
     highlights: [],
     aboutImage: "", heroImage: mediaUrl(row.hero_image || ""), stackImage: "",
   };
@@ -116,22 +135,39 @@ export default function ProfileAdmin() {
         <Field label="Availability badge"><input value={row.availability_badge || ""} placeholder="Open to internships" onChange={(e) => setRow({ ...row, availability_badge: e.target.value })} /></Field>
         <Field label="Name"><input value={row.name || ""} onChange={(e) => setRow({ ...row, name: e.target.value })} placeholder={SEED.profile.name} /></Field>
         <Field label="Tagline"><input value={row.title || ""} onChange={(e) => setRow({ ...row, title: e.target.value })} /></Field>
-        <Field label="Résumé URL — shown as a sidebar icon"><input value={row.resume_url || ""} onChange={(e) => setRow({ ...row, resume_url: e.target.value })} placeholder="https://…" /></Field>
+        <Field label="Role summary — one line, shown under the tagline">
+          <input
+            value={row.role_summary || ""}
+            onChange={(e) => setRow({ ...row, role_summary: e.target.value })}
+            placeholder={SEED.profile.roleSummary}
+          />
+        </Field>
+        <Field label="Résumé URL — shown as a labeled button, not just an icon"><input value={row.resume_url || ""} onChange={(e) => setRow({ ...row, resume_url: e.target.value })} placeholder="https://…" /></Field>
         <Field label="GitHub URL — shown as a sidebar icon"><input value={links.github} onChange={(e) => setLinks({ ...links, github: e.target.value })} placeholder="https://github.com/…" /></Field>
         <Field label="LinkedIn URL — shown as a sidebar icon"><input value={links.linkedin} onChange={(e) => setLinks({ ...links, linkedin: e.target.value })} placeholder="https://linkedin.com/in/…" /></Field>
         <p className="admin-hint">Email is edited on the Contact page — it's shared with the Contact section's own links.</p>
 
-        <h2 className="admin-section-h">Rotating role titles</h2>
+        <h2 className="admin-section-h">Quick facts</h2>
+        <p className="admin-hint" style={{ marginTop: -8, marginBottom: 16 }}>
+          Shown as a small grid under the About paragraphs — short label/value pairs like "Education" / "Computer Science, KIIT — 2027".
+        </p>
         <div className="infocard-editor">
-          {roles.map((r, i) => (
+          {quickFacts.map((f, i) => (
             <div className="infocard-row" key={i}>
-              <input className="infocard-text" value={r} placeholder="Full-Stack Engineer" onChange={(e) => { const next = [...roles]; next[i] = e.target.value; setRoles(next); }} />
-              <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i - 1; if (j < 0) return; const next = [...roles]; [next[i], next[j]] = [next[j], next[i]]; setRoles(next); }}>↑</button>
-              <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i + 1; if (j >= roles.length) return; const next = [...roles]; [next[i], next[j]] = [next[j], next[i]]; setRoles(next); }}>↓</button>
-              <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={() => setRoles(roles.filter((_, j) => j !== i))}>✕</button>
+              <input
+                className="infocard-text" style={{ maxWidth: 140 }} value={f.label} placeholder="Label"
+                onChange={(e) => { const next = [...quickFacts]; next[i] = { ...next[i], label: e.target.value }; setQuickFacts(next); }}
+              />
+              <input
+                className="infocard-text" value={f.value} placeholder="Value"
+                onChange={(e) => { const next = [...quickFacts]; next[i] = { ...next[i], value: e.target.value }; setQuickFacts(next); }}
+              />
+              <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i - 1; if (j < 0) return; const next = [...quickFacts]; [next[i], next[j]] = [next[j], next[i]]; setQuickFacts(next); }}>↑</button>
+              <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i + 1; if (j >= quickFacts.length) return; const next = [...quickFacts]; [next[i], next[j]] = [next[j], next[i]]; setQuickFacts(next); }}>↓</button>
+              <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={() => setQuickFacts(quickFacts.filter((_, j) => j !== i))}>✕</button>
             </div>
           ))}
-          <button className="btn btn-ghost" onClick={() => setRoles([...roles, ""])}>+ Add role</button>
+          <button className="btn btn-ghost" onClick={() => setQuickFacts([...quickFacts, { label: "", value: "" }])}>+ Add fact</button>
         </div>
 
         <h2 className="admin-section-h">About paragraphs</h2>

@@ -20,6 +20,7 @@ export const SEED: SiteContent = {
       "Accessibility Engineer",
       "CS @ KIIT, '27",
     ],
+    roleSummary: "Full-stack engineer working across AI product development and accessibility.",
     ctaPrimary: { label: "See the work →", href: "#projects" },
     ctaGhost: { label: "Get in touch", href: "#contact" },
     resumeUrl: "#",
@@ -30,10 +31,9 @@ export const SEED: SiteContent = {
       "Outside of internships I keep building small things, mostly to understand how they work. I care about writing code someone else can pick up easily, and about software that still holds up once real people are using it.",
     ],
     quickFacts: [
-      { label: "Location", value: "Kolkata, India" },
-      { label: "Degree", value: "B.Tech CSE" },
-      { label: "Graduation", value: "Aug 2027" },
+      { label: "Education", value: "Computer Science, KIIT — 2027" },
       { label: "Focus", value: "Full-Stack · AI" },
+      { label: "Interests", value: "" },
       { label: "Status", value: "Open to roles" },
     ],
     infoCards: [

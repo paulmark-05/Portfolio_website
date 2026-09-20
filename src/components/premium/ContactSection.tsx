@@ -2,7 +2,7 @@ import SectionLabel from "./SectionLabel";
 import { Reveal } from "./Reveal";
 import type { Settings } from "../../lib/types";
 
-export default function ContactSection({ settings, index }: { settings: Settings; index: string }) {
+export default function ContactSection({ settings, resumeUrl, index }: { settings: Settings; resumeUrl?: string; index: string }) {
   return (
     <section id="contact" className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-28">
       <SectionLabel index={index}>Contact</SectionLabel>
@@ -30,6 +30,11 @@ export default function ContactSection({ settings, index }: { settings: Settings
         {settings.github && (
           <a href={settings.github} target="_blank" rel="noopener" className="pr-btn-hover rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
             GitHub ↗
+          </a>
+        )}
+        {resumeUrl && (
+          <a href={resumeUrl} target="_blank" rel="noopener" className="pr-btn-hover rounded-full border border-edge/20 bg-surface/25 px-6 py-3 text-sm text-bone backdrop-blur-md hover:border-edge/40 hover:bg-surface/40">
+            Résumé ↓
           </a>
         )}
       </Reveal>

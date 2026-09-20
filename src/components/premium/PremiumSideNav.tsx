@@ -5,23 +5,6 @@ import { SECTION_LABELS } from "../../lib/sections";
 import { SECTION_ICONS, icGithub, icLinkedin, icMail, icFile } from "./navIcons";
 import type { Profile, Settings } from "../../lib/types";
 
-function RoleCycle({ roles }: { roles: string[] }) {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    if (roles.length < 2) return;
-    const t = setInterval(() => setI((n) => (n + 1) % roles.length), 2800);
-    return () => clearInterval(t);
-  }, [roles]);
-  if (!roles.length) return null;
-  return (
-    <div className="h-6 overflow-hidden font-mono text-xs tracking-wide text-mist">
-      <motion.div key={i} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-        {roles[i]}
-      </motion.div>
-    </div>
-  );
-}
-
 function IconLink({ href, label, icon, mail = false, small = false }: { href: string; label: string; icon: JSX.Element; mail?: boolean; small?: boolean }) {
   return (
     <a
@@ -39,11 +22,29 @@ function IconLink({ href, label, icon, mail = false, small = false }: { href: st
   );
 }
 
+/** The résumé link specifically stays labeled at all times (not just on
+ *  hover) — hover tooltips never fire on touch, so an icon-only résumé
+ *  link is effectively unlabeled on mobile forever. */
+function ResumeLink({ href, small = false }: { href: string; small?: boolean }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener"
+      className={`pr-btn-hover flex shrink-0 items-center gap-1.5 rounded-full border border-edge/12 bg-surface/25 text-mist backdrop-blur-md transition-colors hover:text-bone ${
+        small ? "px-2.5 py-1" : "px-3.5 py-1.5"
+      }`}
+    >
+      <span className={`flex items-center justify-center ${small ? "h-[12px] w-[12px]" : "h-[14px] w-[14px]"}`}>{icFile}</span>
+      <span className={`font-mono ${small ? "text-[11px]" : "text-xs"}`}>Résumé</span>
+    </a>
+  );
+}
+
 export default function PremiumSideNav({ profile, settings }: { profile: Profile; settings: Settings }) {
   const { lenisRef } = useSmoothScroll();
   const [active, setActive] = useState("about");
   const [open, setOpen] = useState(false);
-  const roles = (profile.roles || []).filter(Boolean);
 
   const links: [string, string][] = [
     ["about", "About"],
@@ -55,7 +56,6 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
     settings.github && { href: settings.github, label: "GitHub", icon: icGithub },
     settings.linkedin && { href: settings.linkedin, label: "LinkedIn", icon: icLinkedin },
     settings.email && { href: `mailto:${settings.email}`, label: "Email", icon: icMail, mail: true },
-    profile.resumeUrl && { href: profile.resumeUrl, label: "Résumé", icon: icFile },
   ].filter((x): x is { href: string; label: string; icon: JSX.Element; mail?: boolean } => !!x);
 
   useEffect(() => {
@@ -99,9 +99,10 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
   return (
     <>
       {/* Desktop — a top-anchored sidebar: availability badge, name,
-          tagline and rotating role live here permanently (there's no
-          separate "Main"/hero section on the page), then quick links to
-          GitHub/LinkedIn/email/résumé, then the section menu below. */}
+          tagline and a one-line role summary live here permanently
+          (there's no separate "Main"/hero section on the page), then
+          quick links to GitHub/LinkedIn/email/résumé, then the section
+          menu below. */}
       <nav aria-label="Primary" className="fixed inset-y-0 left-0 z-50 hidden w-[280px] flex-col overflow-y-auto px-9 py-14 lg:flex xl:w-[320px] xl:px-11">
         <div>
           {profile.availabilityBadge && (
@@ -112,11 +113,12 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
           )}
           <h1 className="font-display text-4xl font-light leading-[1.02] tracking-tightest text-bone xl:text-[2.65rem]">{profile.name}</h1>
           {profile.title && <p className="mt-3 font-display text-lg font-light leading-snug text-silver">{profile.title}</p>}
-          <div className="mt-3"><RoleCycle roles={roles} /></div>
+          {profile.roleSummary && <p className="mt-3 font-mono text-xs leading-relaxed text-mist">{profile.roleSummary}</p>}
 
-          {iconLinks.length > 0 && (
+          {(iconLinks.length > 0 || profile.resumeUrl) && (
             <div className="mt-6 flex flex-wrap items-center gap-2">
               {iconLinks.map((l) => <IconLink key={l.label} {...l} />)}
+              {profile.resumeUrl && <ResumeLink href={profile.resumeUrl} />}
             </div>
           )}
         </div>
@@ -158,9 +160,10 @@ export default function PremiumSideNav({ profile, settings }: { profile: Profile
           <span className="text-mist">{"</"}</span>nayani<span className="text-mist">.paul</span><span className="text-mist">{">"}</span>
         </a>
 
-        {iconLinks.length > 0 && (
+        {(iconLinks.length > 0 || profile.resumeUrl) && (
           <div className="flex shrink-0 items-center gap-1.5">
             {iconLinks.map((l) => <IconLink key={l.label} {...l} small />)}
+            {profile.resumeUrl && <ResumeLink href={profile.resumeUrl} small />}
           </div>
         )}
 

@@ -38,6 +38,16 @@ export default function MobileIntro({ profile }: { profile: Profile }) {
           {profile.title}
         </motion.p>
       )}
+      {profile.roleSummary && (
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-3 font-mono text-xs leading-relaxed text-mist"
+        >
+          {profile.roleSummary}
+        </motion.p>
+      )}
     </section>
   );
 }
