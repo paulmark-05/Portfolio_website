@@ -4,41 +4,48 @@
    warm paper · charcoal text · muted sage accent
    one display font (Fraunces) + one body (Inter) + mono accents
    ============================================================ */
+/* Admin CMS palette — matches the public site's dark-teal "glass on water"
+   redesign (see premium.css's --pr-* tokens) so the CMS visually belongs
+   to the site it manages. index.html hardcodes data-theme="light" (admin
+   has no theme toggle of its own), so this is the block that's actually
+   live; the "dark" block below is kept identical in case anything ever
+   flips it. Values are plain hex/rgba (not the premium rgb-triplet
+   convention) since admin.css consumes them directly as solid colors. */
 :root[data-theme="light"]{
-  --paper:#FAF8F3;          /* warm off-white, Notion-ish */
-  --paper-2:#F4F1EA;        /* slight contrast surface */
-  --card:#FFFFFE;           /* pure card */
-  --ink:#1F1D1A;            /* charcoal, never pure black */
-  --ink-2:#3A362F;
-  --muted:#6E6A62;
-  --dim:#9B968C;
-  --line:#E8E3D8;
-  --line-2:#D9D2C2;
-  --accent:#5A7A5B;         /* muted sage */
-  --accent-2:#A36B3F;       /* warm clay (for occasional emphasis) */
-  --warm:#E8D9C2;           /* warm sand for highlights */
-  --shadow-soft:rgba(60,52,38,.08);
-  --shadow-med:rgba(60,52,38,.14);
-  --rim-warm:rgba(255,235,200,.5);
-  --rim-cool:rgba(190,210,220,.3);
+  --paper:#030c0e;
+  --paper-2:#06181b;
+  --card:#0a2024;
+  --ink:#e6f8f9;
+  --ink-2:#bfe6e8;
+  --muted:#8fc4c7;
+  --dim:#5f8a8d;
+  --line:rgba(190,232,235,.14);
+  --line-2:rgba(190,232,235,.26);
+  --accent:#2dcdd6;         /* teal — matches the public site's --pr-accent */
+  --accent-2:#ff7a68;       /* warm coral, reserved for destructive actions */
+  --warm:rgba(45,205,214,.12);
+  --shadow-soft:rgba(0,0,0,.35);
+  --shadow-med:rgba(0,0,0,.55);
+  --rim-warm:rgba(45,205,214,.18);
+  --rim-cool:rgba(190,232,235,.14);
 }
 :root[data-theme="dark"]{
-  --paper:#16140F;
-  --paper-2:#1C1A14;
-  --card:#1F1D17;
-  --ink:#EFEAE0;
-  --ink-2:#C9C3B5;
-  --muted:#8F8979;
-  --dim:#5F5B50;
-  --line:#2A271F;
-  --line-2:#3A372E;
-  --accent:#92B190;
-  --accent-2:#D89E6B;
-  --warm:#43382A;
-  --shadow-soft:rgba(0,0,0,.32);
-  --shadow-med:rgba(0,0,0,.46);
-  --rim-warm:rgba(220,180,120,.18);
-  --rim-cool:rgba(140,180,210,.12);
+  --paper:#030c0e;
+  --paper-2:#06181b;
+  --card:#0a2024;
+  --ink:#e6f8f9;
+  --ink-2:#bfe6e8;
+  --muted:#8fc4c7;
+  --dim:#5f8a8d;
+  --line:rgba(190,232,235,.14);
+  --line-2:rgba(190,232,235,.26);
+  --accent:#2dcdd6;
+  --accent-2:#ff7a68;
+  --warm:rgba(45,205,214,.12);
+  --shadow-soft:rgba(0,0,0,.35);
+  --shadow-med:rgba(0,0,0,.55);
+  --rim-warm:rgba(45,205,214,.18);
+  --rim-cool:rgba(190,232,235,.14);
 }
 
 :root{
@@ -74,7 +81,7 @@ img{max-width:100%;display:block}
 
 /* subtle paper grain — sits on body, not on character */
 body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.15;
   background-image:url("data:[BASE64_STRIPPED] xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 :root[data-theme="dark"] body::before{opacity:.25}
