@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { Field } from "../components/FormDrawer";
@@ -34,6 +34,7 @@ export default function ProfileAdmin() {
   const [links, setLinks] = useState<{ github: string; linkedin: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState(false);
+  const factValueRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
   useEffect(() => {
     supabase!.from("profiles").select("*").limit(1).maybeSingle().then(({ data }) => {
@@ -100,6 +101,28 @@ export default function ProfileAdmin() {
   const quickFacts: QuickFact[] = row.quick_facts?.length ? row.quick_facts : DEFAULT_QUICK_FACTS;
   const setQuickFacts = (next: QuickFact[]) => setRow({ ...row, quick_facts: next });
 
+  // Inserts "·" at the cursor — a nicer-looking separator than typing "|"
+  // for values like "Full-Stack · AI", without needing a special key.
+  const insertDot = (i: number) => {
+    const el = factValueRefs.current[i];
+    const current = quickFacts[i].value;
+    const pos = el?.selectionStart ?? current.length;
+    // Trim whitespace right at the cursor first, so inserting next to a
+    // space the user already typed doesn't leave a double space behind.
+    const before = current.slice(0, pos).replace(/\s+$/, "");
+    const after = current.slice(pos).replace(/^\s+/, "");
+    const sep = before && after ? " · " : before ? " · " : after ? "· " : "·";
+    const nextValue = before + sep + after;
+    const next = [...quickFacts];
+    next[i] = { ...next[i], value: nextValue };
+    setQuickFacts(next);
+    requestAnimationFrame(() => {
+      const caret = before.length + sep.length;
+      el?.focus();
+      el?.setSelectionRange(caret, caret);
+    });
+  };
+
   const rawParas = (row.about_md || "").split("\n\n").filter((p: string) => p.trim() !== "");
   const paras: string[] = rawParas.length ? rawParas : [""];
   const setParas = (next: string[]) => setRow({ ...row, about_md: next.join("\n\n") });
@@ -159,9 +182,11 @@ export default function ProfileAdmin() {
                 onChange={(e) => { const next = [...quickFacts]; next[i] = { ...next[i], label: e.target.value }; setQuickFacts(next); }}
               />
               <input
+                ref={(el) => { factValueRefs.current[i] = el; }}
                 className="infocard-text" value={f.value} placeholder="Value"
                 onChange={(e) => { const next = [...quickFacts]; next[i] = { ...next[i], value: e.target.value }; setQuickFacts(next); }}
               />
+              <button type="button" className="btn btn-ghost" style={{ padding: "4px 9px" }} title="Insert · separator" onClick={() => insertDot(i)}>·</button>
               <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i - 1; if (j < 0) return; const next = [...quickFacts]; [next[i], next[j]] = [next[j], next[i]]; setQuickFacts(next); }}>↑</button>
               <button className="btn btn-ghost" style={{ padding: "4px 9px" }} onClick={() => { const j = i + 1; if (j >= quickFacts.length) return; const next = [...quickFacts]; [next[i], next[j]] = [next[j], next[i]]; setQuickFacts(next); }}>↓</button>
               <button className="btn btn-ghost danger" style={{ padding: "4px 9px" }} onClick={() => setQuickFacts(quickFacts.filter((_, j) => j !== i))}>✕</button>

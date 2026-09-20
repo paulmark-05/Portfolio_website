@@ -1,5 +1,5 @@
 import SectionLabel from "./SectionLabel";
-import { Reveal, RevealGroup, RevealItem } from "./Reveal";
+import { Reveal } from "./Reveal";
 import type { Profile } from "../../lib/types";
 
 export default function AboutSection({ profile, index }: { profile: Profile; index: string }) {
@@ -21,17 +21,17 @@ export default function AboutSection({ profile, index }: { profile: Profile; ind
       </div>
 
       {facts.length > 0 && (
-        <RevealGroup className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Reveal delay={0.1} className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {facts.map((f, i) => (
-            <RevealItem
+            <div
               key={i}
               className="rounded-2xl border border-edge/10 bg-surface/30 px-6 py-5 backdrop-blur-xl transition-all duration-300 hover:border-edge/20 hover:bg-surface/45"
             >
               <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-mist">{f.label}</div>
               <div className="mt-1.5 text-lg text-bone">{f.value}</div>
-            </RevealItem>
+            </div>
           ))}
-        </RevealGroup>
+        </Reveal>
       )}
     </section>
   );
